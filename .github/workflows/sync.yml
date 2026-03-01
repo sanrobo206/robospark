@@ -1,0 +1,26 @@
+name: RoboSpark Data Sync
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  update-data:
+    if: contains(github.event.issue.labels.*.name, 'data-update')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update data.json
+        run: |
+          echo '${{ github.event.issue.body }}' > data.json
+          git config user.name "RoboSpark-Bot"
+          git config user.email "bot@robospark.io"
+          git add data.json
+          git commit -m "Update courses and members"
+          git push
+      - name: Close Update Request
+        run: gh issue close ${{ github.event.issue.number }} --confirm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
