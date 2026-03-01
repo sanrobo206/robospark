@@ -7,11 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Update Data
+      - name: Save Data
         run: |
           echo '${{ github.event.client_payload.data }}' > data.json
-          git config user.name "RoboSpark Bot"
+          git config user.name "RoboSpark-Bot"
           git config user.email "bot@robospark.com"
           git add data.json
-          git commit -m "Mainframe Update"
+          git commit -m "Mainframe Update [bypass]"
           git push
