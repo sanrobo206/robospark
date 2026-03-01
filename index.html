@@ -7,224 +7,176 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background-color: #020617; }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.5); }
-        .neon-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #020617; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.4); }
+        .admin-glow { border: 1px solid #3b82f6; box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); }
     </style>
 </head>
-<body class="text-slate-200 selection:bg-blue-500">
+<body>
 
-    <nav class="fixed w-full z-50 px-6 py-4 flex justify-between items-center bg-slate-950/80 border-b border-slate-800">
-        <div class="text-2xl font-bold tracking-tighter text-white">
-            ROBO<span class="text-blue-500">SPARK</span>
-        </div>
-        <div id="nav-auth">
-            <button onclick="toggleModal('auth-modal')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full text-sm font-bold transition-all transform hover:scale-105">
-                Join Club
-            </button>
-        </div>
+    <nav class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-950/90 sticky top-0 z-50">
+        <div class="text-2xl font-bold tracking-tighter text-white uppercase italic">Robo<span class="text-blue-500">Spark</span></div>
+        <div id="user-status" class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">System_Offline</div>
     </nav>
 
-    <header id="hero" class="relative pt-32 pb-20 px-6 overflow-hidden">
-        <div class="max-w-5xl mx-auto text-center relative z-10">
-            <div class="inline-block px-4 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
-                Est. 2026
-            </div>
-            <h1 class="text-6xl md:text-8xl font-bold text-white mb-6 leading-tight">
-                Zero to Hero <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">in Robotics</span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
-                The premier hub for engineering excellence. Master hardware, firmware, and AI to build the machines of tomorrow.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-                <div class="glass p-6 rounded-2xl text-left">
-                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 text-blue-400">⚙️</div>
-                    <h3 class="font-bold text-white mb-2">Hardware Labs</h3>
-                    <p class="text-sm text-slate-500">Hands-on experience with sensors, actuators, and microcontrollers.</p>
-                </div>
-                <div class="glass p-6 rounded-2xl text-left">
-                    <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4 text-cyan-400">💻</div>
-                    <h3 class="font-bold text-white mb-2">Algorithm Forge</h3>
-                    <p class="text-sm text-slate-500">Code path-finding, computer vision, and neural networks.</p>
-                </div>
-                <div class="glass p-6 rounded-2xl text-left">
-                    <div class="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center mb-4 text-indigo-400">🚀</div>
-                    <h3 class="font-bold text-white mb-2">Grand Prix</h3>
-                    <p class="text-sm text-slate-500">Compete in high-stakes regional and national robotics leagues.</p>
-                </div>
-            </div>
+    <header id="hero" class="py-24 text-center px-4">
+        <h1 class="text-7xl font-bold mb-6 tracking-tighter">Zero to Hero <br><span class="text-blue-500 text-5xl">Robotics</span></h1>
+        <p class="text-slate-400 max-w-xl mx-auto mb-10 text-lg">Secure Access Portal. Version 2.1</p>
+        <div class="flex justify-center gap-4">
+            <button onclick="openModal('signup')" class="bg-blue-600 px-10 py-4 rounded-xl font-bold hover:bg-blue-500 transition shadow-xl shadow-blue-900/20">Join Club</button>
+            <button onclick="openModal('login')" class="bg-slate-800 px-10 py-4 rounded-xl font-bold hover:bg-slate-700 transition">Portal Login</button>
         </div>
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent -z-10"></div>
     </header>
 
-    <main id="dashboard" class="hidden pt-28 px-6 max-w-7xl mx-auto pb-20">
-        <section id="admin-panel" class="hidden mb-16 glass rounded-3xl p-8 border-blue-500/30 neon-glow">
-            <h2 class="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-                <span class="p-2 bg-blue-500 rounded-lg text-sm">ADMIN</span> Command Center
-            </h2>
+    <main id="app" class="hidden max-w-6xl mx-auto p-6">
+        <section id="admin-panel" class="hidden mb-12 glass p-8 rounded-3xl admin-glow">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-blue-400">Admin Command Center</h2>
+                <span class="bg-blue-500/10 text-blue-500 text-[10px] px-3 py-1 rounded-full font-bold uppercase">Root Access Granted</span>
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <div class="space-y-4">
-                    <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider">Deploy New Course</h3>
-                    <input id="new-title" type="text" placeholder="Course Name (e.g. LiDAR Basics)" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl focus:border-blue-500 outline-none">
-                    <textarea id="new-desc" placeholder="Course Description" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl h-32"></textarea>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input id="new-time" type="datetime-local" class="bg-slate-900 border border-slate-700 p-4 rounded-xl">
-                        <input id="new-vid" type="text" placeholder="Intro Video URL" class="bg-slate-900 border border-slate-700 p-4 rounded-xl">
-                    </div>
-                    <button onclick="publishToRepo()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-bold uppercase tracking-widest transition-all">
-                        Commit to Database
-                    </button>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Deploy New Training Module</label>
+                    <input id="c-title" placeholder="Module Name" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500">
+                    <textarea id="c-desc" placeholder="Module Details" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl h-24 outline-none focus:border-blue-500"></textarea>
+                    <input id="c-time" type="datetime-local" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none">
+                    <button onclick="saveData()" class="w-full bg-blue-600 py-4 rounded-xl font-bold hover:bg-blue-500 shadow-lg shadow-blue-900/30 transition-all">SYNC & SAVE ALL CHANGES</button>
                 </div>
-                <div>
-                    <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">Club Member Roster</h3>
-                    <div class="bg-slate-950/50 rounded-2xl border border-slate-800 p-4 h-[350px] overflow-y-auto">
-                        <div id="roster-list" class="space-y-3">
-                            </div>
-                    </div>
+                <div class="bg-slate-950/50 p-6 rounded-2xl border border-slate-800">
+                    <h3 class="text-xs font-bold uppercase text-slate-500 mb-4">Member Directory (<span id="mem-count">0</span>)</h3>
+                    <div id="roster" class="text-xs space-y-3 max-h-64 overflow-y-auto pr-2 font-mono"></div>
                 </div>
             </div>
         </section>
 
-        <h2 class="text-4xl font-bold text-white mb-10">Active Learning Tracks</h2>
-        <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            </div>
+        <h2 class="text-3xl font-bold mb-8">Available Modules</h2>
+        <div id="course-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
     </main>
 
-    <div id="auth-modal" class="fixed inset-0 bg-slate-950/95 z-[100] hidden items-center justify-center p-6">
-        <div class="glass p-8 rounded-3xl w-full max-w-md shadow-2xl relative">
-            <button onclick="toggleModal('auth-modal')" class="absolute top-4 right-4 text-slate-500 hover:text-white">✕</button>
-            <div id="signup-step-1">
-                <h2 class="text-3xl font-bold text-white mb-2">Join RoboSpark</h2>
-                <p class="text-slate-500 mb-8 text-sm">Enter your credentials to access the lab.</p>
-                <div class="space-y-4">
-                    <input id="reg-name" type="text" placeholder="Full Name" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl">
-                    <input id="reg-grade" type="text" placeholder="Grade Level" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl">
-                    <input id="reg-email" type="email" placeholder="Email Address" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl">
-                    <input id="reg-pass" type="password" placeholder="Create Password" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl">
-                    <button onclick="simulateOTP()" class="w-full bg-blue-600 py-4 rounded-xl font-bold hover:bg-blue-500">Request Access Code</button>
-                </div>
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-950/98 hidden items-center justify-center p-6 z-[100]">
+        <div id="signup-form" class="glass p-10 rounded-3xl w-full max-w-md hidden">
+            <h2 class="text-3xl font-bold mb-8">Initialize Account</h2>
+            <div class="space-y-4">
+                <input id="reg-name" placeholder="Full Name" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <input id="reg-grade" placeholder="Grade Level" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <input id="reg-email" type="email" placeholder="Gmail Address" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <input id="reg-pass" type="password" placeholder="Create Club Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <button onclick="handleSignup()" class="w-full bg-blue-600 py-4 rounded-xl font-bold uppercase mt-4">Confirm Registration</button>
             </div>
-            <div id="signup-step-2" class="hidden">
-                <h2 class="text-3xl font-bold text-white mb-2">Verify Email</h2>
-                <p class="text-blue-400 mb-8 text-sm font-mono">A code has been sent to your inbox.</p>
-                <div class="space-y-4">
-                    <input id="otp-input" type="text" placeholder="Enter 6-digit code" class="w-full bg-slate-900 border border-blue-500 p-4 rounded-xl text-center text-2xl font-bold tracking-[0.5em]">
-                    <button onclick="finishAuth()" class="w-full bg-white text-black py-4 rounded-xl font-bold hover:bg-blue-400">Complete Enrollment</button>
-                </div>
+        </div>
+        <div id="login-form" class="glass p-10 rounded-3xl w-full max-w-md hidden">
+            <h2 class="text-3xl font-bold mb-8 text-center">Access Portal</h2>
+            <div class="space-y-4">
+                <input id="log-email" type="email" placeholder="Gmail Address" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <input id="log-pass" type="password" placeholder="Club Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <button onclick="handleLogin()" class="w-full bg-blue-600 py-4 rounded-xl font-bold uppercase mt-4">Verify Identity</button>
             </div>
         </div>
     </div>
 
     <script>
-        const CONFIG = {
-            owner: "sanrobo206",
-            repo: "robospark",
-            adminEmail: "sanrobo206@gmail.com"
-        };
+        const ADMIN_EMAIL = "sanrobo206@gmail.com";
+        const ADMIN_PASS = "robosparkadmin"; 
+        
+        let appDB = { courses: [], members: [] };
 
-        let appData = { courses: [], members: [] };
-        let user = null;
-
-        // Load Data from GitHub
-        async function loadData() {
+        async function init() {
             try {
-                const res = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/data.json?cache=${Date.now()}`);
-                appData = await res.json();
-                renderUI();
-            } catch (e) {
-                console.log("No data found or repo not public yet.");
+                const res = await fetch(`https://raw.githubusercontent.com/sanrobo206/robospark/main/data.json?t=${Date.now()}`);
+                appDB = await res.json();
+                render();
+            } catch(e) { console.error("Database connection required."); }
+        }
+
+        function openModal(mode) {
+            document.getElementById('modal-overlay').classList.replace('hidden', 'flex');
+            document.getElementById('signup-form').classList.toggle('hidden', mode !== 'signup');
+            document.getElementById('login-form').classList.toggle('hidden', mode !== 'login');
+        }
+
+        function handleSignup() {
+            const name = document.getElementById('reg-name').value;
+            const grade = document.getElementById('reg-grade').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+
+            if(!name || !email || !pass) return alert("Fill all fields.");
+
+            appDB.members.push({ name, grade, email, pass });
+            window.location.href = `mailto:${email}?subject=Welcome to RoboSpark&body=Hi ${name}, welcome to the Zero to Hero club!`;
+            loginSession(name, grade, email);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('log-email').value;
+            const pass = document.getElementById('log-pass').value;
+
+            if(email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+                return loginSession("Sanatan Sinha", "7th", ADMIN_EMAIL, true);
+            }
+
+            const user = appDB.members.find(m => m.email === email && m.pass === pass);
+            if(user) {
+                loginSession(user.name, user.grade, user.email);
+            } else {
+                alert("Incorrect login details.");
             }
         }
 
-        function toggleModal(id) {
-            const m = document.getElementById(id);
-            m.classList.toggle('hidden');
-            m.classList.toggle('flex');
-        }
-
-        function simulateOTP() {
-            document.getElementById('signup-step-1').classList.add('hidden');
-            document.getElementById('signup-step-2').classList.remove('hidden');
-        }
-
-        function finishAuth() {
-            user = {
-                name: document.getElementById('reg-name').value,
-                grade: document.getElementById('reg-grade').value,
-                email: document.getElementById('reg-email').value
-            };
-
-            // Switch UI
-            document.getElementById('auth-modal').classList.add('hidden');
+        function loginSession(name, grade, email, isAdmin = false) {
+            if(isAdmin) document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('modal-overlay').classList.replace('flex', 'hidden');
             document.getElementById('hero').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            
-            document.getElementById('nav-auth').innerHTML = `
-                <div class="flex items-center gap-4">
-                    <span class="text-slate-400 text-sm font-mono">${user.email}</span>
-                    <button onclick="location.reload()" class="text-red-500 text-xs font-bold uppercase">Logout</button>
-                </div>
-            `;
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('user-status').innerText = `AUTH_LEVEL: ${name.toUpperCase()}`;
+            render();
+        }
 
-            if (user.email === CONFIG.adminEmail) {
-                document.getElementById('admin-panel').classList.remove('hidden');
+        function removeMember(index) {
+            if(confirm("Permanently delete this member from the list?")) {
+                appDB.members.splice(index, 1);
+                render();
+            }
+        }
+
+        function saveData() {
+            const title = document.getElementById('c-title').value;
+            if(title) {
+                appDB.courses.push({
+                    title: title,
+                    desc: document.getElementById('c-desc').value,
+                    time: document.getElementById('c-time').value
+                });
             }
 
-            // Temporarily add member to list for UI
-            appData.members.push(user);
-            renderUI();
+            const body = encodeURIComponent(JSON.stringify(appDB, null, 2));
+            window.open(`https://github.com/sanrobo206/robospark/issues/new?title=DATA_SYNC&body=${body}&labels=data-update`, '_blank');
         }
 
-        function publishToRepo() {
-            const title = document.getElementById('new-title').value;
-            const desc = document.getElementById('new-desc').value;
-            const time = document.getElementById('new-time').value;
-            const video = document.getElementById('new-vid').value;
-
-            if (!title) return alert("Course title required");
-
-            appData.courses.push({ title, desc, time, video });
-
-            // Trigger GitHub Action via Issue
-            const issueBody = encodeURIComponent(JSON.stringify(appData, null, 2));
-            const url = `https://github.com/${CONFIG.owner}/${CONFIG.repo}/issues/new?title=DATA_SYNC&body=${issueBody}&labels=data-update`;
-            
-            window.open(url, '_blank');
-            alert("ADMIN: You must click 'Submit New Issue' on the next page to save changes permanently.");
-        }
-
-        function renderUI() {
-            // Render Courses
+        function render() {
             const grid = document.getElementById('course-grid');
-            grid.innerHTML = appData.courses.map(c => `
+            grid.innerHTML = appDB.courses.map(c => `
                 <div class="glass p-8 rounded-3xl hover:border-blue-500/50 transition-all group">
-                    <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-blue-400">${c.title}</h3>
-                    <p class="text-slate-400 text-sm mb-6 leading-relaxed line-clamp-3">${c.desc}</p>
-                    <div class="flex items-center justify-between mt-auto">
-                        <div class="text-xs font-mono text-blue-500 uppercase">${c.time.replace('T', ' ')}</div>
-                        ${c.video ? `<a href="${c.video}" target="_blank" class="text-xs text-slate-500 hover:text-white underline">Intro Video</a>` : ''}
-                    </div>
-                    <button onclick="window.open('https://meet.google.com/new')" class="w-full mt-6 bg-slate-800 group-hover:bg-blue-600 text-white py-3 rounded-xl font-bold transition-all">
-                        Join Google Meet
-                    </button>
+                    <h3 class="text-2xl font-bold mb-2 group-hover:text-blue-400">${c.title}</h3>
+                    <p class="text-slate-500 text-sm mb-6">${c.desc}</p>
+                    <div class="text-[10px] text-blue-500 font-bold mb-6 tracking-widest uppercase">${c.time}</div>
+                    <button onclick="window.open('https://meet.google.com/new')" class="w-full bg-slate-800 group-hover:bg-blue-600 py-3 rounded-xl font-bold transition-all">START SESSION</button>
                 </div>
             `).join('');
 
-            // Render Members (Admin only view)
-            const roster = document.getElementById('roster-list');
-            roster.innerHTML = appData.members.map(m => `
-                <div class="flex items-center justify-between p-3 bg-slate-900 rounded-xl border border-slate-800">
+            document.getElementById('roster').innerHTML = appDB.members.map((m, i) => `
+                <div class="p-3 bg-slate-900/50 border border-slate-800 rounded-xl flex justify-between items-center group">
                     <div>
-                        <div class="text-sm font-bold text-white">${m.name}</div>
-                        <div class="text-xs text-slate-500">${m.email}</div>
+                        <div class="text-white">${m.name}</div>
+                        <div class="text-[10px] text-slate-500 uppercase">${m.email}</div>
                     </div>
-                    <div class="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Gr. ${m.grade}</div>
+                    <button onclick="removeMember(${i})" class="text-red-500/50 hover:text-red-500 text-xs font-bold px-2 py-1 transition">REMOVE</button>
                 </div>
             `).join('');
+            document.getElementById('mem-count').innerText = appDB.members.length;
         }
 
-        // Initialize
-        loadData();
+        init();
     </script>
 </body>
 </html>
