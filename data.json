@@ -1,4 +1,19 @@
 {
-  "courses": [],
-  "members": []
+  "courses": [
+    {
+      "id": 1715432000,
+      "title": "Welcome to RoboSpark",
+      "desc": "This is your first module. Admin can delete this and add real robotics courses from the dashboard.",
+      "timestamp": "2024-05-11"
+    }
+  ],
+  "members": [
+    {
+      "name": "Sanatan Sinha",
+      "grade": "Admin",
+      "email": "sanrobo206@gmail.com",
+      "pass": "robosparkadmin"
+    }
+  ],
+  "isLive": false
 }
