@@ -18,7 +18,7 @@
 
     <div id="loader" class="fixed inset-0 bg-slate-950/90 z-[100] hidden flex flex-col items-center justify-center gap-4">
         <div class="loader w-14 h-14 border-4 border-slate-800 rounded-full"></div>
-        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] animate-pulse">Communicating...</p>
+        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] animate-pulse">Syncing...</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 px-8 py-5 glass flex justify-between items-center border-b border-white/5">
@@ -45,11 +45,6 @@
                 <input id="reg-pass" type="password" placeholder="Create Password" class="w-full bg-slate-900 border border-slate-800 p-5 rounded-2xl outline-none text-white">
             </div>
 
-            <div id="otp-fields" class="hidden space-y-4">
-                <p class="text-[10px] text-blue-400 uppercase tracking-widest">OTP Sent to Gmail Notification</p>
-                <input id="otp-input" placeholder="000000" class="w-full bg-slate-950 border border-blue-500 p-5 rounded-2xl text-center text-3xl font-bold tracking-widest text-white">
-            </div>
-
             <button id="auth-btn" onclick="handleAuth()" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-500 transition shadow-2xl shadow-blue-600/20">Authorize</button>
             <p id="toggle-text" onclick="toggleAuth()" class="text-[10px] text-slate-500 cursor-pointer hover:text-white mt-8 uppercase underline tracking-widest">New Student? Sign Up</p>
         </div>
@@ -60,7 +55,7 @@
             <h2 class="text-4xl font-black italic text-blue-500 mb-8 uppercase tracking-tighter">Command Terminal</h2>
             <div class="space-y-6">
                 <input id="c-title" placeholder="Lesson Name" class="w-full bg-slate-950 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-blue-500">
-                <textarea id="c-desc" placeholder="Lesson content, code, or links..." class="w-full bg-slate-950 border border-white/5 p-5 rounded-2xl h-48 text-white outline-none focus:border-blue-500 resize-none"></textarea>
+                <textarea id="c-desc" placeholder="Lesson content..." class="w-full bg-slate-950 border border-white/5 p-5 rounded-2xl h-48 text-white outline-none focus:border-blue-500 resize-none"></textarea>
                 <button onclick="deployCourse()" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Publish to Mainframe</button>
             </div>
         </section>
@@ -86,22 +81,17 @@
         
         let db = { courses: [], users: [] };
         let mode = 'login';
-        let generatedOTP = "";
 
         async function init() {
             setLoading(true, "Initializing...");
             try {
-                // Fetch from raw to ensure the public can always see the latest data
                 const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?v=${Date.now()}`);
                 if(res.ok) db = await res.json();
                 
                 const sessionEmail = localStorage.getItem('robo_session_email');
                 if(sessionEmail) finalizeLogin(sessionEmail);
                 else setLoading(false);
-            } catch(e) { 
-                console.error("Init failed:", e);
-                setLoading(false); 
-            }
+            } catch(e) { setLoading(false); }
         }
 
         function toggleAuth() {
@@ -109,7 +99,7 @@
             document.getElementById('login-fields').classList.toggle('hidden', mode !== 'login');
             document.getElementById('signup-fields').classList.toggle('hidden', mode !== 'signup');
             document.getElementById('auth-title').innerHTML = mode === 'login' ? 'CORE<span class="text-blue-500">.OS</span>' : 'JOIN<span class="text-blue-500">.CORE</span>';
-            document.getElementById('auth-btn').innerText = mode === 'login' ? 'Authorize' : 'Request OTP';
+            document.getElementById('auth-btn').innerText = mode === 'login' ? 'Authorize' : 'Register Now';
         }
 
         async function handleAuth() {
@@ -119,49 +109,28 @@
             if(mode === 'login') {
                 const pass = document.getElementById('login-pass').value;
                 const user = db.users.find(u => u.email === email && u.password === pass);
-                // Admin hardcoded bypass
                 if(user || (email === "sanrobo206@gmail.com" && pass === "robosparkadmin")) finalizeLogin(email);
                 else alert("Access Denied: Invalid Credentials.");
             } else {
-                if(!generatedOTP) {
-                    setLoading(true, "Dispatching OTP...");
-                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-                    
-                    // Signal GitHub to notify admin of new signup
-                    await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
-                        method: "POST",
-                        headers: { 
-                            Authorization: `token ${REPO.token}`,
-                            "Accept": "application/vnd.github.v3+json"
-                        },
-                        body: JSON.stringify({ 
-                            event_type: "update_db", 
-                            client_payload: { data: JSON.stringify(db), note: `OTP Request from ${email}` } 
-                        })
-                    });
-
-                    setLoading(false);
-                    document.getElementById('signup-fields').classList.add('hidden');
-                    document.getElementById('otp-fields').classList.remove('hidden');
-                    document.getElementById('auth-btn').innerText = "Verify Access";
-                    alert("A code was dispatched. Check your Gmail notifications.\n\n[System Debug: " + generatedOTP + "]");
-                } else {
-                    if(document.getElementById('otp-input').value === generatedOTP) await register(email);
-                    else alert("Verification Failed: Code Mismatch.");
-                }
+                await register(email);
             }
         }
 
         async function register(email) {
-            setLoading(true, "Registering...");
+            const name = document.getElementById('reg-name').value;
+            const pass = document.getElementById('reg-pass').value;
+            if(!name || !pass) return alert("Please fill all signup fields.");
+
+            setLoading(true, "Creating Account...");
             db.users.push({
-                name: document.getElementById('reg-name').value,
-                grade: document.getElementById('reg-grade').value,
+                name: name,
+                grade: document.getElementById('reg-grade').value || "N/A",
                 email: email,
-                password: document.getElementById('reg-pass').value,
+                password: pass,
                 role: 'student'
             });
             await sync();
+            finalizeLogin(email);
         }
 
         async function deployCourse() {
@@ -176,7 +145,8 @@
 
         async function sync() {
             try {
-                // Use Repository Dispatch to trigger GitHub Action (The secure way for public repos)
+                document.getElementById('loader-text').innerText = "Updating Mainframe...";
+                
                 const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
                     method: "POST",
                     headers: { 
@@ -190,8 +160,9 @@
                 });
 
                 if (res.ok) {
-                    alert("SUCCESS: Database updated. Changes will appear live in ~30 seconds.");
-                    location.reload();
+                    alert("Sync Successful! Mainframe updated.");
+                    render();
+                    setLoading(false);
                 } else {
                     const err = await res.json();
                     alert("SYNC ERROR: " + err.message);
@@ -225,7 +196,7 @@
         function render() {
             const grid = document.getElementById('course-grid');
             if(db.courses.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-slate-600 italic py-20">No active modules found in mainframe.</p>`;
+                grid.innerHTML = `<p class="col-span-full text-center text-slate-600 italic py-20">No active modules found.</p>`;
                 return;
             }
             grid.innerHTML = db.courses.map(c => `
