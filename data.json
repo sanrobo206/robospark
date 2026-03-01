@@ -1,18 +1,1 @@
-{
-  "courses": [
-    {
-      "title": "Robotics",
-      "desc": "robotics",
-      "id": 1772337174553
-    }
-  ],
-  "users": [
-    {
-      "email": "sanrobo206@gmail.com",
-      "password": "robosparkadmin",
-      "name": "Admin",
-      "grade": "N/A",
-      "role": "admin"
-    }
-  ]
-}
+{"courses":[],"users":[{"email":"sanrobo206@gmail.com","password":"robosparkadmin","name":"Admin","grade":"N/A","role":"admin"}]}
