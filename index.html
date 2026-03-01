@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoboSpark | Core OS</title>
+    <title>RoboSpark | Secure OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
@@ -11,64 +11,72 @@
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
         .loader { border-top-color: #3b82f6; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div id="loader" class="fixed inset-0 bg-slate-950/90 z-[100] hidden flex flex-col items-center justify-center gap-4">
-        <div class="loader w-12 h-12 border-4 border-slate-800 rounded-full"></div>
-        <p class="text-blue-500 font-bold text-[10px] uppercase tracking-[0.3em] animate-pulse">Syncing Database...</p>
+        <div class="loader w-14 h-14 border-4 border-slate-800 rounded-full"></div>
+        <p class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] animate-pulse">Syncing Core...</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 px-8 py-4 glass flex justify-between items-center border-b border-white/5">
         <div class="text-2xl font-black italic tracking-tighter uppercase">Robo<span class="text-blue-500">Spark</span></div>
-        <div id="nav-info" class="hidden items-center gap-4">
-            <span id="user-display" class="text-[10px] font-mono text-slate-500"></span>
-            <button onclick="logout()" class="text-[10px] font-bold text-red-500 uppercase">Exit</button>
+        <div id="nav-user" class="hidden items-center gap-4">
+            <span id="user-tag" class="text-[10px] font-mono text-slate-500"></span>
+            <button onclick="logout()" class="text-[10px] font-bold text-red-500 hover:text-white uppercase transition">Logout</button>
         </div>
     </nav>
 
-    <div id="auth-view" class="pt-48 px-6 text-center max-w-md mx-auto">
-        <h1 id="auth-header" class="text-7xl font-black italic mb-6 uppercase tracking-tighter">LMS<span class="text-blue-500">.v3</span></h1>
+    <div id="auth-view" class="pt-32 px-6 text-center max-w-md mx-auto">
+        <h1 id="auth-title" class="text-6xl font-black italic mb-2 uppercase tracking-tighter">SECURE<span class="text-blue-500">.LOG</span></h1>
         
-        <div class="space-y-4">
-            <input id="email-field" placeholder="Gmail Address" class="w-full bg-slate-900 border border-slate-800 p-5 rounded-2xl outline-none focus:border-blue-500 text-white">
+        <div class="space-y-4 mt-8">
+            <input id="email" placeholder="Gmail Address" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
             
-            <div id="otp-container" class="hidden space-y-4">
-                <div class="p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl">
-                    <p class="text-[10px] text-blue-400 uppercase mb-1">Verification Code</p>
-                    <span id="otp-display" class="text-3xl font-black tracking-widest text-white"></span>
-                </div>
-                <input id="otp-input" placeholder="Enter Code Above" class="w-full bg-slate-950 border border-blue-500 p-5 rounded-2xl text-center text-2xl font-bold">
+            <div id="login-fields" class="space-y-4">
+                <input id="login-pass" type="password" placeholder="Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
             </div>
 
-            <button id="auth-btn" onclick="handleAuth()" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-500 transition shadow-xl shadow-blue-600/20">Access System</button>
-            <p id="toggle-mode" onclick="toggleMode()" class="text-[10px] text-slate-500 cursor-pointer hover:text-white mt-6 uppercase tracking-widest underline">New Student? Sign Up</p>
+            <div id="signup-fields" class="hidden space-y-4">
+                <input id="reg-name" placeholder="Full Name" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
+                <input id="reg-grade" placeholder="Grade" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
+                <input id="reg-pass" type="password" placeholder="Desired Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
+            </div>
+
+            <div id="otp-fields" class="hidden space-y-4">
+                <p class="text-[10px] text-blue-400 uppercase animate-pulse">Check Gmail for 6-digit code</p>
+                <input id="otp-input" placeholder="000000" class="w-full bg-slate-950 border border-blue-500 p-4 rounded-xl text-center text-2xl font-bold tracking-widest text-white">
+            </div>
+
+            <button id="auth-btn" onclick="handleAuth()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-500 transition shadow-xl shadow-blue-600/20">Sign In</button>
+            <p id="toggle-text" onclick="toggleAuth()" class="text-[10px] text-slate-500 cursor-pointer hover:text-white mt-6 uppercase tracking-widest underline">No account? Create one</p>
         </div>
     </div>
 
     <main id="app-view" class="hidden pt-32 px-6 max-w-7xl mx-auto pb-20">
         <section id="admin-panel" class="hidden mb-12 p-10 glass rounded-[3rem] border-blue-500/20">
-            <h2 class="text-3xl font-black italic text-blue-500 mb-8 uppercase tracking-tighter">Command Center</h2>
+            <h2 class="text-3xl font-black italic text-blue-500 mb-8 uppercase tracking-tighter">Command Dashboard</h2>
             <div class="space-y-4">
-                <input id="course-title" placeholder="Lesson Name" class="w-full bg-slate-950 border border-white/5 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
-                <textarea id="course-content" placeholder="Content, instructions, and project links..." class="w-full bg-slate-950 border border-white/5 p-4 rounded-xl h-40 outline-none focus:border-blue-500 text-white"></textarea>
-                <button onclick="addCourse()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Instant Deploy & Sync</button>
+                <input id="c-title" placeholder="Lesson Name" class="w-full bg-slate-950 border border-white/5 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
+                <textarea id="c-desc" placeholder="Lesson content..." class="w-full bg-slate-950 border border-white/5 p-4 rounded-xl h-40 outline-none focus:border-blue-500 text-white"></textarea>
+                <button onclick="deployCourse()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Add to Live Site</button>
             </div>
         </section>
-
         <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
     <script>
-        const REPO = { 
-            owner: "sanrobo206", 
-            name: "robospark", 
-            token: "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" 
+        const REPO = {
+            owner: "sanrobo206",
+            name: "robospark",
+            token: "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" // Your PAT
         };
+        
         let db = { courses: [], users: [] };
-        let signupMode = false;
-        let activeOTP = "";
+        let mode = 'login';
+        let generatedOTP = "";
 
         async function init() {
             setLoading(true);
@@ -76,124 +84,116 @@
                 const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?v=${Date.now()}`);
                 if(res.ok) db = await res.json();
                 
-                const session = localStorage.getItem('robo_session');
-                if(session) loginUser(session);
+                const sessionEmail = localStorage.getItem('robo_session_email');
+                if(sessionEmail) finalizeLogin(sessionEmail);
                 else setLoading(false);
-                
-                render();
             } catch(e) { setLoading(false); }
         }
 
-        function toggleMode() {
-            signupMode = !signupMode;
-            document.getElementById('auth-header').innerHTML = signupMode ? 'CORE<span class="text-blue-500">.JOIN</span>' : 'LMS<span class="text-blue-500">.v3</span>';
-            document.getElementById('toggle-mode').innerText = signupMode ? "Already a student? Sign In" : "New Student? Sign Up";
+        function toggleAuth() {
+            mode = (mode === 'login') ? 'signup' : 'login';
+            document.getElementById('login-fields').classList.toggle('hidden', mode !== 'login');
+            document.getElementById('signup-fields').classList.toggle('hidden', mode !== 'signup');
+            document.getElementById('auth-title').innerHTML = mode === 'login' ? 'SECURE<span class="text-blue-500">.LOG</span>' : 'JOIN<span class="text-blue-500">.CORE</span>';
+            document.getElementById('auth-btn').innerText = mode === 'login' ? 'Sign In' : 'Get Verification Code';
+            document.getElementById('toggle-text').innerText = mode === 'login' ? 'No account? Create one' : 'Back to Login';
         }
 
         async function handleAuth() {
-            const email = document.getElementById('email-field').value.toLowerCase();
-            if(!email.includes('@')) return alert("Invalid Email");
+            const email = document.getElementById('email').value.toLowerCase();
+            if(!email.includes('@')) return alert("Enter valid Gmail");
 
-            // Signup Flow
-            if(signupMode) {
-                if(!activeOTP) {
-                    activeOTP = Math.floor(100000 + Math.random() * 900000).toString();
-                    document.getElementById('otp-display').innerText = activeOTP;
-                    document.getElementById('otp-container').classList.remove('hidden');
-                    document.getElementById('auth-btn').innerText = "Verify & Join";
-                    return;
-                }
-                if(document.getElementById('otp-input').value === activeOTP) {
-                    await register(email);
-                } else {
-                    alert("Incorrect Code");
-                }
-                return;
-            }
-
-            // Login Flow
-            const user = db.users.find(u => u.email === email);
-            if(user || email === "sanrobo206@gmail.com") {
-                loginUser(email);
+            if(mode === 'login') {
+                const pass = document.getElementById('login-pass').value;
+                const user = db.users.find(u => u.email === email && u.password === pass);
+                if(user) finalizeLogin(email);
+                else alert("Invalid credentials.");
             } else {
-                alert("Account not found. Please sign up.");
+                if(!generatedOTP) {
+                    setLoading(true);
+                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+                    
+                    // Direct API Dispatch to trigger Email Action
+                    await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
+                        method: "POST",
+                        headers: { Authorization: `token ${REPO.token}` },
+                        body: JSON.stringify({ event_type: "send-otp", client_payload: { email, code: generatedOTP }})
+                    });
+
+                    setLoading(false);
+                    document.getElementById('signup-fields').classList.add('hidden');
+                    document.getElementById('otp-fields').classList.remove('hidden');
+                    document.getElementById('auth-btn').innerText = "Verify & Complete Signup";
+                } else {
+                    if(document.getElementById('otp-input').value === generatedOTP) {
+                        await register(email);
+                    } else { alert("Code mismatch."); }
+                }
             }
         }
 
         async function register(email) {
             setLoading(true);
-            if(!db.users.find(u => u.email === email)) {
-                db.users.push({ email: email, role: "student" });
-                await sync();
-            }
-            loginUser(email);
+            const newUser = {
+                name: document.getElementById('reg-name').value,
+                grade: document.getElementById('reg-grade').value,
+                email: email,
+                password: document.getElementById('reg-pass').value,
+                role: 'student'
+            };
+            db.users.push(newUser);
+            await sync();
+            finalizeLogin(email);
         }
 
-        async function addCourse() {
-            const title = document.getElementById('course-title').value;
-            const desc = document.getElementById('course-content').value;
-            if(!title) return alert("Title required");
-
+        async function deployCourse() {
+            const title = document.getElementById('c-title').value;
+            const desc = document.getElementById('c-desc').value;
+            if(!title) return;
             setLoading(true);
             db.courses.unshift({ title, desc, id: Date.now() });
             await sync();
-            
-            document.getElementById('course-title').value = "";
-            document.getElementById('course-content').value = "";
-            render();
-            setLoading(false);
+            location.reload();
         }
 
         async function sync() {
-            // Get current file version (SHA)
-            const file = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
+            const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
                 headers: { Authorization: `token ${REPO.token}` }
             });
-            const fileData = await file.json();
-
-            // Direct Update via API (No Issues)
+            const data = await res.json();
             await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
                 method: "PUT",
                 headers: { Authorization: `token ${REPO.token}` },
-                body: JSON.stringify({ 
-                    message: "LMS Direct Sync", 
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))), 
-                    sha: fileData.sha 
+                body: JSON.stringify({
+                    message: "Direct Database Sync",
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
+                    sha: data.sha
                 })
             });
         }
 
-        function loginUser(email) {
-            localStorage.setItem('robo_session', email);
+        function finalizeLogin(email) {
+            localStorage.setItem('robo_session_email', email);
             document.getElementById('auth-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
-            document.getElementById('nav-info').classList.replace('hidden', 'flex');
-            document.getElementById('user-display').innerText = email;
-            
-            if(email === "sanrobo206@gmail.com") {
-                document.getElementById('admin-panel').classList.remove('hidden');
-            }
+            document.getElementById('nav-user').classList.replace('hidden', 'flex');
+            document.getElementById('user-tag').innerText = email;
+            if(email === "sanrobo206@gmail.com") document.getElementById('admin-panel').classList.remove('hidden');
             setLoading(false);
             render();
         }
 
-        function logout() {
-            localStorage.removeItem('robo_session');
-            location.reload();
-        }
-
+        function logout() { localStorage.removeItem('robo_session_email'); location.reload(); }
+        function setLoading(s) { document.getElementById('loader').classList.toggle('hidden', !s); }
         function render() {
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
-                <div class="glass p-8 rounded-[2.5rem] border-white/5 flex flex-col h-full hover:border-blue-500/50 transition-all">
-                    <h3 class="text-2xl font-black italic mb-4 text-blue-500 uppercase tracking-tighter">${c.title}</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed flex-1 whitespace-pre-line">${c.desc}</p>
-                    <a href="https://meet.google.com/saz-zeid-did" target="_blank" class="mt-8 block w-full text-center bg-blue-600 py-4 rounded-xl font-bold text-[10px] tracking-widest uppercase shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition">Launch Lab</a>
+                <div class="glass p-8 rounded-[2.5rem] border-white/5 flex flex-col h-full">
+                    <h3 class="text-2xl font-black italic mb-4 text-blue-500 uppercase">${c.title}</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed flex-1">${c.desc}</p>
+                    <a href="https://meet.google.com/saz-zeid-did" target="_blank" class="mt-8 block w-full text-center bg-blue-600 py-4 rounded-xl font-bold uppercase">Enter Lab</a>
                 </div>
             `).join('');
         }
-
-        function setLoading(s) { document.getElementById('loader').classList.toggle('hidden', !s); }
-
         init();
     </script>
 </body>
