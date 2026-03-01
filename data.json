@@ -1,1 +1,19 @@
-{"courses":[],"users":[{"email":"sanrobo206@gmail.com","password":"robosparkadmin","name":"Admin","grade":"N/A","role":"admin"}]}
+{
+  "courses": [],
+  "users": [
+    {
+      "email": "sanrobo206@gmail.com",
+      "password": "robosparkadmin",
+      "name": "Admin",
+      "grade": "N/A",
+      "role": "admin"
+    },
+    {
+      "name": "test one",
+      "grade": "7",
+      "email": "12.sanatansinha@gmail.com",
+      "password": "123456",
+      "role": "student"
+    }
+  ]
+}
