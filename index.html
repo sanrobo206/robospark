@@ -18,7 +18,7 @@
 
     <div id="loader" class="fixed inset-0 bg-slate-950/90 z-[100] hidden flex flex-col items-center justify-center gap-4">
         <div class="loader w-14 h-14 border-4 border-slate-800 rounded-full"></div>
-        <p class="text-blue-500 font-bold text-xs uppercase tracking-widest animate-pulse">Communicating with GitHub...</p>
+        <p class="text-blue-500 font-bold text-xs uppercase tracking-widest animate-pulse">Syncing with Mainframe...</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 px-8 py-5 glass flex justify-between items-center border-b border-white/5">
@@ -46,7 +46,7 @@
             </div>
 
             <div id="otp-fields" class="hidden space-y-4">
-                <p class="text-[10px] text-blue-400 uppercase tracking-widest">Verification Sent to Gmail</p>
+                <p class="text-[10px] text-blue-400 uppercase tracking-widest animate-pulse">OTP Notification Dispatched</p>
                 <input id="otp-input" placeholder="000000" class="w-full bg-slate-950 border border-blue-500 p-5 rounded-2xl text-center text-3xl font-bold tracking-widest text-white">
             </div>
 
@@ -57,11 +57,11 @@
 
     <main id="app-view" class="hidden pt-32 px-6 max-w-7xl mx-auto pb-20">
         <section id="admin-panel" class="hidden mb-16 p-10 glass rounded-[3rem] border-blue-500/20 shadow-2xl">
-            <h2 class="text-4xl font-black italic text-blue-500 mb-8 uppercase tracking-tighter">Admin Control</h2>
+            <h2 class="text-4xl font-black italic text-blue-500 mb-8 uppercase tracking-tighter">Admin Console</h2>
             <div class="space-y-6">
                 <input id="c-title" placeholder="Course Title" class="w-full bg-slate-950 border border-white/5 p-5 rounded-2xl text-white outline-none">
-                <textarea id="c-desc" placeholder="Lesson content & links..." class="w-full bg-slate-950 border border-white/5 p-5 rounded-2xl h-48 text-white outline-none resize-none"></textarea>
-                <button onclick="deployCourse()" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all transform active:scale-95">Add Course Live</button>
+                <textarea id="c-desc" placeholder="Course Content..." class="w-full bg-slate-950 border border-white/5 p-5 rounded-2xl h-48 text-white outline-none resize-none"></textarea>
+                <button onclick="deployCourse()" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all transform active:scale-95">Push to Live Site</button>
             </div>
         </section>
         <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
@@ -71,8 +71,7 @@
         const REPO = {
             owner: "sanrobo206",
             name: "robospark",
-            // REPLACE THIS TOKEN ONE MORE TIME WITH THE NEW ONE YOU JUST MADE
-            token: "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" 
+            token: "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" 
         };
         
         let db = { courses: [], users: [] };
@@ -82,20 +81,20 @@
         async function init() {
             setLoading(true);
             try {
-                // Fetch current DB state
                 const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
                     headers: { Authorization: `token ${REPO.token}` }
                 });
                 if(res.ok) {
                     const data = await res.json();
                     db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                    render();
                 }
                 
                 const sessionEmail = localStorage.getItem('robo_session_email');
                 if(sessionEmail) finalizeLogin(sessionEmail);
                 else setLoading(false);
             } catch(e) { 
-                console.error(e);
+                console.error("Initialization Failed:", e);
                 setLoading(false); 
             }
         }
@@ -109,41 +108,36 @@
 
         async function handleAuth() {
             const email = document.getElementById('email').value.toLowerCase();
-            if(!email.includes('@')) return alert("Use a valid Gmail.");
+            if(!email.includes('@')) return alert("Enter valid Gmail.");
 
             if(mode === 'login') {
                 const pass = document.getElementById('login-pass').value;
                 const user = db.users.find(u => u.email === email && u.password === pass);
-                // Admin Hardcoded Fallback
                 if(user || (email === "sanrobo206@gmail.com" && pass === "robosparkadmin")) {
                     finalizeLogin(email);
                 } else {
-                    alert("Invalid credentials.");
+                    alert("Invalid Credentials.");
                 }
             } else {
                 if(!generatedOTP) {
                     setLoading(true);
                     generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
                     
-                    // Trigger Repository Dispatch (Notifies your Gmail via GitHub)
-                    const dispatch = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
+                    // Dispatch to GitHub Actions (Triggers notification to your Gmail)
+                    await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
                         method: "POST",
                         headers: { Authorization: `token ${REPO.token}` },
-                        body: JSON.stringify({ event_type: "signup_verification", client_payload: { email, otp: generatedOTP } })
+                        body: JSON.stringify({ event_type: "signup_alert", client_payload: { email, code: generatedOTP } })
                     });
-
-                    if(!dispatch.ok) {
-                        alert("Dispatch Error " + dispatch.status + ": Check if 'workflow' box is checked on your PAT.");
-                    }
 
                     setLoading(false);
                     document.getElementById('signup-fields').classList.add('hidden');
                     document.getElementById('otp-fields').classList.remove('hidden');
-                    document.getElementById('auth-btn').innerText = "Verify & Access";
-                    alert("A code was sent to your Gmail notifications. [Debug Code: " + generatedOTP + "]");
+                    document.getElementById('auth-btn').innerText = "Confirm Code";
+                    alert("Code requested for: " + email + "\n\n[Debug: " + generatedOTP + "]");
                 } else {
                     if(document.getElementById('otp-input').value === generatedOTP) await register(email);
-                    else alert("Code mismatch.");
+                    else alert("Code Mismatch.");
                 }
             }
         }
@@ -179,19 +173,17 @@
 
         async function sync() {
             try {
-                // 1. Get current SHA
                 const getFile = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
                     headers: { Authorization: `token ${REPO.token}` }
                 });
                 
                 if(!getFile.ok) {
-                    alert("GitHub Access Denied (" + getFile.status + "). Your PAT is definitely missing 'repo' permissions.");
+                    alert("ERROR " + getFile.status + ": Access Denied. Is your repo Public? GitHub likely revoked the token.");
                     return false;
                 }
                 
                 const fileData = await getFile.json();
 
-                // 2. Upload new data
                 const putFile = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
                     method: "PUT",
                     headers: { 
@@ -199,18 +191,13 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        message: "Mainframe Update",
+                        message: "Mainframe Sync",
                         content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
                         sha: fileData.sha
                     })
                 });
 
-                if(putFile.ok) return true;
-                else {
-                    const err = await putFile.json();
-                    alert("Sync Failed: " + err.message);
-                    return false;
-                }
+                return putFile.ok;
             } catch (err) {
                 alert("Critical Connection Failure.");
                 return false;
