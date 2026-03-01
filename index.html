@@ -18,14 +18,14 @@
 
     <div id="loader" class="fixed inset-0 bg-slate-950/90 z-[100] hidden flex flex-col items-center justify-center gap-4">
         <div class="loader w-14 h-14 border-4 border-slate-800 rounded-full"></div>
-        <p class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] animate-pulse">Syncing Core...</p>
+        <p class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] animate-pulse">Processing Request...</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 px-8 py-4 glass flex justify-between items-center border-b border-white/5">
         <div class="text-2xl font-black italic tracking-tighter uppercase">Robo<span class="text-blue-500">Spark</span></div>
         <div id="nav-user" class="hidden items-center gap-4">
             <span id="user-tag" class="text-[10px] font-mono text-slate-500"></span>
-            <button onclick="logout()" class="text-[10px] font-bold text-red-500 hover:text-white uppercase transition">Logout</button>
+            <button onclick="logout()" class="text-[10px] font-bold text-red-500 hover:text-white uppercase transition">Disconnect</button>
         </div>
     </nav>
 
@@ -43,11 +43,12 @@
                 <input id="reg-name" placeholder="Full Name" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
                 <input id="reg-grade" placeholder="Grade" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
                 <input id="reg-pass" type="password" placeholder="Desired Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
-            </div>
-
-            <div id="otp-fields" class="hidden space-y-4">
-                <p class="text-[10px] text-blue-400 uppercase animate-pulse">Check Gmail for 6-digit code</p>
-                <input id="otp-input" placeholder="000000" class="w-full bg-slate-950 border border-blue-500 p-4 rounded-xl text-center text-2xl font-bold tracking-widest text-white">
+                
+                <div class="p-4 bg-blue-600/10 border border-blue-500/20 rounded-xl">
+                    <p class="text-[10px] text-blue-400 uppercase">One-Time System Code</p>
+                    <span id="otp-display" class="text-2xl font-black text-white tracking-widest"></span>
+                </div>
+                <input id="otp-input" placeholder="Verify Above Code" class="w-full bg-slate-950 border border-blue-500 p-4 rounded-xl text-center text-xl font-bold tracking-widest text-white">
             </div>
 
             <button id="auth-btn" onclick="handleAuth()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-500 transition shadow-xl shadow-blue-600/20">Sign In</button>
@@ -61,27 +62,27 @@
             <div class="space-y-4">
                 <input id="c-title" placeholder="Lesson Name" class="w-full bg-slate-950 border border-white/5 p-4 rounded-xl outline-none focus:border-blue-500 text-white">
                 <textarea id="c-desc" placeholder="Lesson content..." class="w-full bg-slate-950 border border-white/5 p-4 rounded-xl h-40 outline-none focus:border-blue-500 text-white"></textarea>
-                <button onclick="deployCourse()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Add to Live Site</button>
+                <button onclick="deployCourse()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">Add Course & Sync</button>
             </div>
         </section>
         <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
     <script>
-        const REPO = {
+        const CONFIG = {
             owner: "sanrobo206",
-            name: "robospark",
-            token: "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" // Your PAT
+            repo: "robospark",
+            token: "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" 
         };
         
         let db = { courses: [], users: [] };
         let mode = 'login';
-        let generatedOTP = "";
+        let currentOTP = "";
 
         async function init() {
             setLoading(true);
             try {
-                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?v=${Date.now()}`);
+                const res = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/data.json?v=${Date.now()}`);
                 if(res.ok) db = await res.json();
                 
                 const sessionEmail = localStorage.getItem('robo_session_email');
@@ -94,8 +95,14 @@
             mode = (mode === 'login') ? 'signup' : 'login';
             document.getElementById('login-fields').classList.toggle('hidden', mode !== 'login');
             document.getElementById('signup-fields').classList.toggle('hidden', mode !== 'signup');
+            
+            if(mode === 'signup') {
+                currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
+                document.getElementById('otp-display').innerText = currentOTP;
+            }
+
             document.getElementById('auth-title').innerHTML = mode === 'login' ? 'SECURE<span class="text-blue-500">.LOG</span>' : 'JOIN<span class="text-blue-500">.CORE</span>';
-            document.getElementById('auth-btn').innerText = mode === 'login' ? 'Sign In' : 'Get Verification Code';
+            document.getElementById('auth-btn').innerText = mode === 'login' ? 'Sign In' : 'Register Account';
             document.getElementById('toggle-text').innerText = mode === 'login' ? 'No account? Create one' : 'Back to Login';
         }
 
@@ -107,28 +114,12 @@
                 const pass = document.getElementById('login-pass').value;
                 const user = db.users.find(u => u.email === email && u.password === pass);
                 if(user) finalizeLogin(email);
-                else alert("Invalid credentials.");
+                else alert("Incorrect password or email.");
             } else {
-                if(!generatedOTP) {
-                    setLoading(true);
-                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-                    
-                    // Direct API Dispatch to trigger Email Action
-                    await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
-                        method: "POST",
-                        headers: { Authorization: `token ${REPO.token}` },
-                        body: JSON.stringify({ event_type: "send-otp", client_payload: { email, code: generatedOTP }})
-                    });
-
-                    setLoading(false);
-                    document.getElementById('signup-fields').classList.add('hidden');
-                    document.getElementById('otp-fields').classList.remove('hidden');
-                    document.getElementById('auth-btn').innerText = "Verify & Complete Signup";
-                } else {
-                    if(document.getElementById('otp-input').value === generatedOTP) {
-                        await register(email);
-                    } else { alert("Code mismatch."); }
-                }
+                const otpInput = document.getElementById('otp-input').value;
+                if(otpInput !== currentOTP) return alert("OTP Mismatch");
+                
+                await register(email);
             }
         }
 
@@ -157,15 +148,17 @@
         }
 
         async function sync() {
-            const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
-                headers: { Authorization: `token ${REPO.token}` }
+            const res = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/data.json`, {
+                headers: { Authorization: `token ${CONFIG.token}` }
             });
             const data = await res.json();
-            await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json`, {
+            
+            // DIRECT PUT API CALL - No Issues created
+            await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/data.json`, {
                 method: "PUT",
-                headers: { Authorization: `token ${REPO.token}` },
+                headers: { Authorization: `token ${CONFIG.token}` },
                 body: JSON.stringify({
-                    message: "Direct Database Sync",
+                    message: "Database Sync",
                     content: btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2)))),
                     sha: data.sha
                 })
@@ -178,6 +171,7 @@
             document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('nav-user').classList.replace('hidden', 'flex');
             document.getElementById('user-tag').innerText = email;
+            
             if(email === "sanrobo206@gmail.com") document.getElementById('admin-panel').classList.remove('hidden');
             setLoading(false);
             render();
@@ -185,12 +179,13 @@
 
         function logout() { localStorage.removeItem('robo_session_email'); location.reload(); }
         function setLoading(s) { document.getElementById('loader').classList.toggle('hidden', !s); }
+        
         function render() {
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
-                <div class="glass p-8 rounded-[2.5rem] border-white/5 flex flex-col h-full">
+                <div class="glass p-8 rounded-[2.5rem] border-white/5 flex flex-col h-full hover:border-blue-500/50 transition">
                     <h3 class="text-2xl font-black italic mb-4 text-blue-500 uppercase">${c.title}</h3>
                     <p class="text-slate-400 text-sm leading-relaxed flex-1">${c.desc}</p>
-                    <a href="https://meet.google.com/saz-zeid-did" target="_blank" class="mt-8 block w-full text-center bg-blue-600 py-4 rounded-xl font-bold uppercase">Enter Lab</a>
+                    <a href="https://meet.google.com/saz-zeid-did" target="_blank" class="mt-8 block w-full text-center bg-blue-600 py-4 rounded-xl font-bold uppercase shadow-lg shadow-blue-600/20">Enter Lab</a>
                 </div>
             `).join('');
         }
