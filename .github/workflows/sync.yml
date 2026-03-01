@@ -18,9 +18,9 @@ jobs:
           git config user.name "RoboSpark-Bot"
           git config user.email "bot@robospark.io"
           git add data.json
-          git commit -m "Update courses and members"
+          git commit -m "Permanent Data Update"
           git push
-      - name: Close Update Request
+      - name: Close Request
         run: gh issue close ${{ github.event.issue.number }} --confirm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
