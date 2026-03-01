@@ -1,23 +1,17 @@
-name: RoboSpark Core Sync
+name: Database Sync
 on:
   repository_dispatch:
-    types: [send-otp]
-
+    types: [update_db]
 jobs:
-  otp-delivery:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Verification Email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: sanrobo206@gmail.com
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: RoboSpark | Your 6-Digit Verification Code
-          to: ${{ github.event.client_payload.email }}
-          from: RoboSpark System
-          body: |
-            Hello,
-            Your one-time code for RoboSpark registration is: ${{ github.event.client_payload.code }}
-            Enter this code to verify your account.
+      - uses: actions/checkout@v3
+      - name: Update Data
+        run: |
+          echo '${{ github.event.client_payload.data }}' > data.json
+          git config user.name "RoboSpark Bot"
+          git config user.email "bot@robospark.com"
+          git add data.json
+          git commit -m "Mainframe Update"
+          git push
