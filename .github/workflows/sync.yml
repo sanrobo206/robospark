@@ -1,32 +1,23 @@
-name: RoboSpark Data Sync
+name: RoboSpark Core Sync
 on:
-  issues:
-    types: [opened]
+  repository_dispatch:
+    types: [send-otp]
 
 jobs:
-  update-data:
-    if: contains(github.event.issue.labels.*.name, 'data-update')
+  otp-delivery:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Extract Data from Issue
-        run: |
-          echo '${{ github.event.issue.body }}' > data.json
-          
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "RoboSpark-Bot"
-          git config --global user.email "bot@robospark.com"
-          git add data.json
-          git commit -m "LMS Core: Data Synchronized via Admin Portal"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Close Sync Issue
-        run: |
-          gh issue close ${{ github.event.issue.number }} --comment "Deployment Successful. Data is now live."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Send Verification Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: sanrobo206@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: RoboSpark | Your 6-Digit Verification Code
+          to: ${{ github.event.client_payload.email }}
+          from: RoboSpark System
+          body: |
+            Hello,
+            Your one-time code for RoboSpark registration is: ${{ github.event.client_payload.code }}
+            Enter this code to verify your account.
