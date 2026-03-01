@@ -7,20 +7,26 @@ jobs:
   update-data:
     if: contains(github.event.issue.labels.*.name, 'data-update')
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
     steps:
-      - uses: actions/checkout@v3
-      - name: Update data.json
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Extract Data from Issue
         run: |
           echo '${{ github.event.issue.body }}' > data.json
-          git config user.name "RoboSpark-Bot"
-          git config user.email "bot@robospark.io"
+          
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "RoboSpark-Bot"
+          git config --global user.email "bot@robospark.com"
           git add data.json
-          git commit -m "Permanent Data Update"
+          git commit -m "LMS Core: Data Synchronized via Admin Portal"
           git push
-      - name: Close Request
-        run: gh issue close ${{ github.event.issue.number }} --confirm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Close Sync Issue
+        run: |
+          gh issue close ${{ github.event.issue.number }} --comment "Deployment Successful. Data is now live."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
