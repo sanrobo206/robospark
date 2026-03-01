@@ -1,5 +1,11 @@
 {
-  "courses": [],
+  "courses": [
+    {
+      "title": "Robotics",
+      "desc": "robotics",
+      "id": 1772337174553
+    }
+  ],
   "users": [
     {
       "email": "sanrobo206@gmail.com",
