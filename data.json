@@ -1,13 +1,11 @@
 {
-  "courses": [],
-  "users": [
+  "courses": [
     {
-      "name": "Test One",
-      "email": "12.sanatansinha@gmail.com",
-      "password": "iamCOOL123!",
-      "uid": "RS-7732",
-      "role": "student"
+      "id": 1772422444659,
+      "title": "Robotics: From Zero to Hero",
+      "assignments": []
     }
   ],
+  "users": [],
   "submissions": []
 }
