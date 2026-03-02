@@ -1,17 +1,19 @@
-name: Database Sync
+name: Secure Database Sync
 on:
   repository_dispatch:
     types: [update_db]
 jobs:
-  update:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Save Data
+        with:
+          token: ${{ secrets.MASTER_KEY }} # Uses the hidden secret
+      - name: Update Files
         run: |
           echo '${{ github.event.client_payload.data }}' > data.json
-          git config user.name "RoboSpark-Bot"
+          git config user.name "RoboSpark Secure Bot"
           git config user.email "bot@robospark.com"
           git add data.json
-          git commit -m "Mainframe Update [bypass]"
+          git commit -m "Secure Mainframe Update [No Leaks]"
           git push
