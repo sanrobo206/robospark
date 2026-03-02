@@ -6,6 +6,14 @@
       "assignments": []
     }
   ],
-  "users": [],
+  "users": [
+    {
+      "name": "Test One",
+      "email": "12.sanatansinha@gmail.com",
+      "password": "iamCOOL123!",
+      "uid": "RS-7174",
+      "role": "student"
+    }
+  ],
   "submissions": []
 }
