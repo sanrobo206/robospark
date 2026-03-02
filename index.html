@@ -24,15 +24,16 @@
             transition: all 0.3s ease;
         }
         input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
-        .btn-hero { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); transition: all 0.3s ease; cursor: pointer; }
+        .btn-hero { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); transition: all 0.3s ease; cursor: pointer; border:none; color:white; }
         .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -10px #3b82f6; }
+        .admin-only { border-left: 4px solid #3b82f6; }
     </style>
 </head>
 <body class="min-h-screen pb-20">
 
     <div id="loader" class="fixed inset-0 bg-slate-950 z-[100] flex flex-col items-center justify-center gap-6">
         <div class="loader w-16 h-16 border-4 border-slate-800 rounded-full"></div>
-        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em]">Mainframe Synchronizing...</p>
+        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em]">Processing Data...</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 px-10 py-6 glass flex justify-between items-center border-b border-white/5">
@@ -57,7 +58,6 @@
             <h1 class="text-7xl font-black mb-6 italic tracking-tighter">Hero <span class="text-blue-500">Portal</span></h1>
             <p class="text-slate-400 text-xl font-medium italic underline decoration-blue-500 decoration-4 underline-offset-8">"Zero to Hero in no time."</p>
         </div>
-        
         <div class="glass p-14 rounded-[4rem] space-y-8 border border-white/10 shadow-2xl">
             <input id="email" type="email" placeholder="Hero Email">
             <div id="login-fields" class="space-y-8"><input id="login-pass" type="password" placeholder="Access Password"></div>
@@ -86,10 +86,24 @@
                     </div>
                 </div>
             </div>
+
             <div id="details-panel" class="hidden glass p-12 rounded-[3rem] overflow-hidden">
-                <table class="w-full text-left text-base"><tbody id="directory-list" class="divide-y divide-white/5"></tbody></table>
+                <h3 class="text-xl font-bold mb-6 italic underline">Student Registry</h3>
+                <div id="directory-list" class="space-y-4"></div>
             </div>
-            <div class="glass p-14 rounded-[4rem]"><div id="admin-gradebook" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div></div>
+
+            <div id="user-inspector" class="hidden glass p-12 rounded-[3rem] border-orange-500/30">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="inspect-name" class="text-3xl font-black italic"></h3>
+                    <button onclick="toggleElement('user-inspector')" class="text-red-500 font-bold uppercase text-xs">Close</button>
+                </div>
+                <div id="inspect-content" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+            </div>
+
+            <div class="glass p-14 rounded-[4rem]">
+                <h3 class="text-xs font-bold text-orange-500 uppercase mb-8">Mission Grading Terminal</h3>
+                <div id="admin-gradebook" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+            </div>
         </section>
 
         <div id="grid-view" class="space-y-16">
@@ -105,16 +119,23 @@
                         <h1 id="mod-title" class="text-7xl font-black italic mb-8 tracking-tighter"></h1>
                         <a id="mod-meet" target="_blank" class="inline-block bg-white text-black px-16 py-6 rounded-3xl font-black uppercase text-sm hover:bg-blue-600 hover:text-white transition">Join Google Meet</a>
                     </div>
-                    <div id="admin-add-assign" class="hidden glass p-12 rounded-[3.5rem] border-blue-600/30">
-                        <textarea id="new-assign-text" placeholder="Add assignment mission..." class="h-40 mb-8"></textarea>
+                    
+                    <div id="admin-add-assign" class="hidden glass p-12 rounded-[3.5rem] border-blue-600/30 admin-only">
+                        <p class="text-blue-500 font-black text-xs uppercase mb-4">Admin: Add New Mission</p>
+                        <textarea id="new-assign-text" placeholder="Add mission details..." class="h-40 mb-8"></textarea>
                         <button onclick="addAssignmentToModule()" class="bg-blue-600 px-12 py-5 rounded-2xl font-black text-xs uppercase">Push Assignment</button>
                     </div>
+
                     <div id="assign-list" class="space-y-8"></div>
                 </div>
+
                 <div class="glass p-14 rounded-[4rem] space-y-10 sticky top-40 h-fit border border-white/5">
-                    <h3 class="text-orange-500 font-black text-2xl uppercase italic">Mission Report</h3>
-                    <select id="assign-selector"></select>
-                    <textarea id="sub-content" placeholder="Report content..." class="h-60"></textarea>
+                    <h3 class="text-orange-500 font-black text-2xl uppercase italic underline">Mission Report</h3>
+                    <div class="space-y-4">
+                        <label class="text-[10px] font-bold uppercase text-slate-500">Target Objective</label>
+                        <select id="assign-selector"></select>
+                    </div>
+                    <textarea id="sub-content" placeholder="Paste report content or links..." class="h-60"></textarea>
                     <button onclick="submitAssignment()" class="w-full bg-orange-600 py-6 rounded-3xl font-black text-sm uppercase">Transmit Data</button>
                     <div id="personal-grade" class="text-center p-8 rounded-[2rem] bg-blue-500/10 border border-blue-500/20 hidden"></div>
                 </div>
@@ -128,49 +149,41 @@
         let db = { courses: [], users: [], submissions: [] };
         let currentUser = null, activeMod = null;
 
-        // FORCE REFRESH FROM GITHUB (No Cache)
         async function fetchLatestDB() {
             try {
-                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?nocache=${Date.now()}`);
-                if(res.ok) {
-                    db = await res.json();
-                    return true;
-                }
+                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?v=${Date.now()}`);
+                if(res.ok) { db = await res.json(); return true; }
             } catch(e) { console.error("Cloud Access Failed"); }
             return false;
         }
 
         async function init() {
-            setLoading(true, "Synchronizing Mainframe...");
+            setLoading(true, "Synchronizing...");
             await fetchLatestDB();
             const email = localStorage.getItem('robo_session_email');
             if(email) finalizeLogin(email);
             else setLoading(false);
         }
 
+        // SIGN IN LOGIC (UNCHANGED BY REQUEST)
         async function handleAuth() {
             const email = document.getElementById('email').value.toLowerCase();
             const isSignup = !document.getElementById('signup-fields').classList.contains('hidden');
-
             if(isSignup) {
                 const name = document.getElementById('reg-name').value;
                 const pass = document.getElementById('reg-pass').value;
                 if(!name || !pass || !email) return alert("Fields Required");
-                
-                setLoading(true, "Registering Identity...");
+                setLoading(true, "Registering...");
                 const newUser = { name, email, password: pass, uid: "RS-"+Math.floor(Math.random()*9000), role: 'student' };
                 db.users.push(newUser);
-                if(await sync()) {
-                    // Wait for GitHub to finalize before letting them login
-                    setTimeout(() => finalizeLogin(email), 3000);
-                }
+                if(await sync()) setTimeout(() => finalizeLogin(email), 3000);
             } else {
-                setLoading(true, "Verifying Identity...");
-                await fetchLatestDB(); // RE-FETCH to see newly registered users
+                setLoading(true, "Verifying...");
+                await fetchLatestDB();
                 const pass = document.getElementById('login-pass').value;
                 const user = db.users.find(u => u.email === email && u.password === pass);
                 if(user || (email === "sanrobo206@gmail.com" && pass === "robosparkadmin")) finalizeLogin(email);
-                else { alert("Credentials Rejected. If you just registered, wait 10 seconds."); setLoading(false); }
+                else { alert("Credentials Rejected"); setLoading(false); }
             }
         }
 
@@ -182,7 +195,6 @@
             document.getElementById('nav-user').classList.replace('hidden', 'flex');
             document.getElementById('user-tag').innerText = currentUser.name;
             document.getElementById('user-uid-display').innerText = currentUser.uid;
-            
             if(currentUser.role === 'admin' || email === "sanrobo206@gmail.com") {
                 document.getElementById('admin-panel').classList.remove('hidden');
                 document.getElementById('user-count').innerText = db.users.length;
@@ -204,16 +216,17 @@
                     return true;
                 }
             } catch (e) { alert("Sync Failure"); }
-            setLoading(false);
-            return false;
+            setLoading(false); return false;
         }
 
-        // --- COURSE & ADMIN LOGIC ---
         function renderGrid() {
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
                 <div class="glass p-14 rounded-[4rem] border-white/5 hover:border-blue-500/50 transition cursor-pointer group" onclick="openModule('${c.id}')">
                     <h3 class="text-4xl font-black italic mb-10 group-hover:text-blue-400 transition">${c.title}</h3>
-                    <div class="flex justify-between items-center text-xs font-black text-slate-500 uppercase"><span>Objectives: ${(c.assignments || []).length}</span><span>Launch →</span></div>
+                    <div class="flex justify-between items-center text-xs font-black text-slate-500 uppercase">
+                        <span>${(c.assignments || []).length} Objectives</span>
+                        <span class="text-blue-500">Launch →</span>
+                    </div>
                 </div>`).join('');
         }
 
@@ -227,12 +240,36 @@
             renderModuleAssignments();
         }
 
+        // PROFESSIONAL ASSIGNMENT VIEW
         function renderModuleAssignments() {
             const list = document.getElementById('assign-list');
             const selector = document.getElementById('assign-selector');
             const assigns = activeMod.assignments || [];
-            list.innerHTML = assigns.map((a, i) => `<div class="glass p-12 rounded-[3.5rem] border-white/5"><p class="text-blue-500 font-black text-[11px] uppercase mb-4">Objective #${i+1}</p><p class="text-xl text-slate-300 font-semibold">${a.task}</p></div>`).join('');
-            selector.innerHTML = assigns.map((a, i) => `<option value="${i}">Objective #${i+1}</option>`).join('');
+            
+            list.innerHTML = assigns.map((a, i) => `
+                <div class="glass p-12 rounded-[3.5rem] border-white/5 flex justify-between items-start">
+                    <div>
+                        <p class="text-blue-500 font-black text-[11px] uppercase mb-4 tracking-widest italic">Mission Objective #${i+1}</p>
+                        <p class="text-2xl text-slate-200 font-bold">${a.task}</p>
+                    </div>
+                    ${currentUser.role === 'admin' ? `<button onclick="deleteAssignment('${a.id}')" class="text-red-500 font-black text-[10px] uppercase bg-red-500/10 px-4 py-2 rounded-xl">Delete</button>` : ''}
+                </div>`).join('');
+
+            selector.innerHTML = assigns.map((a, i) => `<option value="${i}">Mission #${i+1}</option>`).join('');
+            
+            const mySub = db.submissions.find(s => s.moduleTitle == activeMod.title && s.studentEmail == currentUser.email);
+            const gDiv = document.getElementById('personal-grade');
+            if(mySub) {
+                gDiv.classList.remove('hidden');
+                gDiv.innerHTML = `<p class='text-xs text-slate-500 font-bold uppercase mb-2'>Grade Assigned</p><p class='text-5xl font-black text-blue-400 italic'>${mySub.grade}</p>`;
+            } else gDiv.classList.add('hidden');
+        }
+
+        async function deleteAssignment(aid) {
+            if(!confirm("Erase this assignment?")) return;
+            const midx = db.courses.findIndex(c => c.id == activeMod.id);
+            db.courses[midx].assignments = db.courses[midx].assignments.filter(a => a.id != aid);
+            if(await sync()) renderModuleAssignments();
         }
 
         async function createModule() {
@@ -258,14 +295,50 @@
             if(await sync()) { alert("Mission Transmitted"); showGrid(); }
         }
 
+        // ADMIN EXTRAS: DIRECTORY & GRADING
         function renderAdminExtras() {
-            document.getElementById('directory-list').innerHTML = db.users.map(u => `<tr><td class="py-6 font-black text-white text-xl">${u.name}</td><td class="text-slate-400">${u.email}</td><td class="text-blue-500 font-mono text-right font-bold">${u.uid}</td></tr>`).join('');
-            document.getElementById('admin-gradebook').innerHTML = db.submissions.map(s => `<div class="glass p-10 rounded-[3rem] border-white/5 space-y-6"><div class="flex justify-between items-center text-xs font-black uppercase"><span class="text-blue-400">${s.studentName}</span><span class="text-orange-500">${s.grade}</span></div><p class="text-base text-slate-300 italic">"${s.content}"</p><div class="flex gap-4"><input id="gr-${s.id}" placeholder="Grade" class="!p-4 !text-sm flex-1"><button onclick="saveGrade('${s.id}')" class="bg-green-600 px-10 rounded-2xl font-black text-xs uppercase">Save</button></div></div>`).join('');
+            document.getElementById('directory-list').innerHTML = db.users.map(u => `
+                <div class="glass p-6 rounded-2xl flex justify-between items-center hover:border-blue-500/50 transition">
+                    <div>
+                        <p class="font-black text-xl italic">${u.name}</p>
+                        <p class="text-xs text-slate-500 uppercase">${u.email}</p>
+                    </div>
+                    <button onclick="inspectUser('${u.email}')" class="bg-blue-600/20 text-blue-400 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">Inspect Work</button>
+                </div>`).join('');
+            
+            document.getElementById('admin-gradebook').innerHTML = db.submissions.filter(s => s.grade === 'PENDING').map(s => `
+                <div class="glass p-8 rounded-[2.5rem] border-white/5 space-y-6">
+                    <div class="flex justify-between items-center text-xs font-black uppercase">
+                        <span class="text-blue-400">${s.studentName}</span>
+                        <span class="text-orange-500">PENDING</span>
+                    </div>
+                    <p class="text-sm text-slate-300 italic">"${s.content}"</p>
+                    <div class="flex gap-4">
+                        <input id="gr-${s.id}" type="number" placeholder="Score %" class="!p-4 !text-sm flex-1">
+                        <button onclick="saveGrade('${s.id}')" class="bg-green-600 px-10 rounded-2xl font-black text-xs uppercase">Grade</button>
+                    </div>
+                </div>`).join('') || "<p class='text-slate-600 italic'>No reports pending.</p>";
+        }
+
+        // INSPECT SPECIFIC USER WORK
+        function inspectUser(email) {
+            const user = db.users.find(u => u.email === email);
+            const subs = db.submissions.filter(s => s.studentEmail === email);
+            document.getElementById('inspect-name').innerText = `${user.name}'s Dossier`;
+            document.getElementById('inspect-content').innerHTML = subs.map(s => `
+                <div class="bg-white/5 p-6 rounded-3xl border border-white/10">
+                    <p class="text-[10px] font-black text-blue-500 uppercase mb-2">${s.moduleTitle}</p>
+                    <p class="text-sm mb-4">Task: ${s.task}</p>
+                    <p class="text-xs italic bg-black/40 p-4 rounded-xl mb-4">"${s.content}"</p>
+                    <p class="text-lg font-black italic text-orange-400">Score: ${s.grade}</p>
+                </div>`).join('') || "<p class='text-slate-500'>No work submitted yet.</p>";
+            document.getElementById('user-inspector').classList.remove('hidden');
         }
 
         async function saveGrade(id) {
             const g = document.getElementById(`gr-${id}`).value;
-            db.submissions.find(s => s.id == id).grade = g;
+            if(!g) return alert("Enter Percentage");
+            db.submissions.find(s => s.id == id).grade = g + "%";
             if(await sync()) renderAdminExtras();
         }
 
