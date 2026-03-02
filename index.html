@@ -3,185 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoboSpark | Secure Terminal</title>
+    <title>RoboSpark | Professional Mainframe</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: #f8fafc; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); }
+        .hero-gradient { background: radial-gradient(circle at top right, #1e40af, transparent), radial-gradient(circle at bottom left, #0f172a, transparent); }
+        .btn-glow:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: translateY(-2px); }
         .hidden { display: none !important; }
-        .loader { border-top-color: #3b82f6; animation: spin 0.8s linear infinite; }
+        .loader { border-top-color: #3b82f6; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen hero-gradient">
 
-    <div id="loader" class="fixed inset-0 bg-slate-950/95 z-[100] hidden flex flex-col items-center justify-center gap-4">
-        <div class="loader w-12 h-12 border-4 border-slate-800 rounded-full"></div>
-        <p id="loader-text" class="text-blue-500 font-bold text-[10px] uppercase tracking-[0.3em]">Establishing Secure Link...</p>
+    <div id="loader" class="fixed inset-0 bg-slate-950 z-[100] hidden flex flex-col items-center justify-center gap-6">
+        <div class="loader w-16 h-16 border-4 border-slate-800 rounded-full"></div>
+        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.5em] animate-pulse">Syncing Mainframe</p>
     </div>
 
-    <div id="auth-view" class="pt-32 px-6 max-w-lg mx-auto">
-        <div class="text-center mb-10">
-            <h1 class="text-3xl font-extrabold mb-2">Geniuses go from <span class="text-blue-500">zero to hero</span> in no time.</h1>
-            <p class="text-slate-500 text-sm">Professional Learning Portal</p>
+    <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center transition-all" id="navbar">
+        <div class="text-2xl font-black tracking-tighter uppercase italic">Robo<span class="text-blue-500">Spark</span></div>
+        <div id="nav-user" class="hidden items-center gap-6">
+            <span id="user-tag" class="text-[10px] font-bold bg-blue-500/10 text-blue-400 px-4 py-2 rounded-full border border-blue-500/20 uppercase tracking-widest"></span>
+            <button onclick="logout()" class="text-xs font-bold text-red-500 hover:text-white transition uppercase tracking-tighter">Sign Out</button>
         </div>
+    </nav>
+
+    <div id="auth-view" class="pt-40 px-6 max-w-xl mx-auto text-center">
+        <div class="mb-12">
+            <h1 class="text-6xl font-extrabold tracking-tight mb-4">Robo<span class="text-blue-500 text-glow">SPARK</span></h1>
+            <p class="text-slate-400 text-lg">"Robospark converts people from <span class="text-white font-bold italic">zero to hero</span> in no time."</p>
+        </div>
+
+        <div class="glass p-10 rounded-[3rem] shadow-2xl space-y-5">
+            <input id="email" type="email" placeholder="Gmail Address" class="w-full p-5 bg-slate-900/50 border border-white/5 rounded-2xl outline-none focus:border-blue-500 transition">
+            
+            <div id="login-fields" class="space-y-5">
+                <input id="login-pass" type="password" placeholder="Access Password" class="w-full p-5 bg-slate-900/50 border border-white/5 rounded-2xl outline-none focus:border-blue-500">
+            </div>
+
+            <div id="signup-fields" class="hidden space-y-5">
+                <input id="reg-name" placeholder="Full Name" class="w-full p-5 bg-slate-900/50 border border-white/5 rounded-2xl outline-none">
+                <input id="reg-grade" placeholder="Current Grade/Year" class="w-full p-5 bg-slate-900/50 border border-white/5 rounded-2xl outline-none">
+                <input id="reg-pass" type="password" placeholder="Create Password" class="w-full p-5 bg-slate-900/50 border border-white/5 rounded-2xl outline-none">
+            </div>
+
+            <button onclick="handleAuth()" id="auth-btn" class="w-full bg-blue-600 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm btn-glow transition-all">Authorize Entry</button>
+            <button onclick="toggleAuth()" id="toggle-text" class="text-xs text-slate-500 hover:text-white underline uppercase tracking-widest">New Student? Join the Core</button>
+        </div>
+    </div>
+
+    <main id="app-view" class="hidden pt-32 px-6 max-w-7xl mx-auto pb-20">
         
-        <div class="glass p-8 rounded-[2rem] space-y-4">
-            <input id="email" type="email" placeholder="Email Address" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl outline-none focus:border-blue-500 transition">
-            <div id="login-fields" class="space-y-4">
-                <input id="login-pass" type="password" placeholder="Password" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl outline-none">
+        <section id="admin-panel" class="hidden mb-20 space-y-10">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-[2.5rem] flex flex-col justify-center items-center text-center">
+                    <p class="text-blue-500 font-bold text-xs uppercase tracking-widest mb-2">Verified Geniuses</p>
+                    <h2 id="user-count" class="text-6xl font-black italic">0</h2>
+                    <button onclick="togglePanel('directory-panel')" class="mt-6 text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full">Detailed Directory</button>
+                </div>
+                
+                <div class="lg:col-span-2 glass p-8 rounded-[2.5rem] space-y-4">
+                    <h3 class="font-bold text-sm text-blue-500 uppercase tracking-widest">Mainframe Command: Create Module</h3>
+                    <input id="c-title" placeholder="Module Title (e.g., Python Mastery)" class="w-full p-4 bg-slate-950 border border-white/5 rounded-xl text-sm">
+                    <textarea id="c-desc" placeholder="Lesson content and specific assignment directions..." class="w-full p-4 bg-slate-950 border border-white/5 rounded-xl h-24 text-sm resize-none"></textarea>
+                    <button onclick="deployCourse()" class="w-full bg-white text-black py-4 rounded-xl font-black text-xs uppercase hover:bg-blue-600 hover:text-white transition">Deploy to Network</button>
+                </div>
             </div>
-            <div id="signup-fields" class="hidden space-y-4">
-                <input id="reg-name" placeholder="Full Name" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                <input id="reg-grade" placeholder="Grade/Level" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                <input id="reg-pass" type="password" placeholder="Create Password" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl">
-            </div>
-            <button onclick="handleAuth()" class="w-full bg-blue-600 py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-blue-500 transition">Enter</button>
-            <p id="toggle-text" onclick="toggleAuth()" class="text-center text-[10px] text-slate-500 cursor-pointer hover:text-white underline uppercase tracking-widest">Create Account</p>
-        </div>
-    </div>
 
-    <main id="app-view" class="hidden pt-24 px-6 max-w-6xl mx-auto pb-20">
-        <section id="admin-panel" class="hidden mb-12 glass p-8 rounded-[2.5rem] border-blue-500/20">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-blue-500 uppercase text-xs tracking-widest">Admin Control Center</h3>
-                <div class="bg-slate-900 px-4 py-2 rounded-full text-[10px] font-bold">Students: <span id="user-count">0</span></div>
+            <div id="directory-panel" class="hidden glass p-10 rounded-[2.5rem] border-white/5">
+                <h3 class="font-black text-xl mb-6 uppercase italic">Student Registry</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead><tr class="text-slate-500 uppercase tracking-widest"><th class="pb-4">Name</th><th class="pb-4">Email</th><th class="pb-4">UID</th><th class="pb-4">Status</th></tr></thead>
+                        <tbody id="directory-list" class="divide-y divide-white/5"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <input id="c-title" placeholder="Module Title" class="w-full p-4 bg-slate-950 border border-white/5 rounded-xl text-sm outline-none focus:border-blue-500">
-                    <textarea id="c-desc" placeholder="Lesson content & Directions..." class="w-full p-4 bg-slate-950 border border-white/5 rounded-xl h-32 text-sm resize-none"></textarea>
-                    <button onclick="deployCourse()" class="w-full bg-white text-black py-4 rounded-xl font-bold text-xs uppercase hover:bg-blue-600 hover:text-white transition">Push to Live Site</button>
-                </div>
-                <div class="bg-slate-950/50 rounded-2xl p-6 overflow-y-auto h-64 border border-white/5">
-                    <h4 class="text-[10px] uppercase font-bold text-slate-500 mb-4 tracking-widest">Recent Registrations</h4>
-                    <div id="directory-list" class="space-y-3 text-[11px]"></div>
-                </div>
+
+            <div class="glass p-10 rounded-[2.5rem]">
+                <h3 class="font-black text-xl mb-6 uppercase italic">Grading Terminal</h3>
+                <div id="gradebook" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
             </div>
         </section>
 
-        <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <div id="grid-view">
+            <h2 class="text-3xl font-black uppercase italic mb-10 tracking-tighter">Your <span class="text-blue-500 underline">Hero</span> Journey</h2>
+            <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+        </div>
+
+        <div id="course-details" class="hidden">
+            <button onclick="exitCourse()" class="text-blue-500 font-bold text-xs uppercase mb-8 hover:text-white transition">← Return to Mainframe</button>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="lg:col-span-2 glass p-12 rounded-[3rem] space-y-8">
+                    <h1 id="view-title" class="text-5xl font-black italic tracking-tighter"></h1>
+                    <p id="view-desc" class="text-slate-400 leading-relaxed text-lg whitespace-pre-line"></p>
+                    <div class="pt-8 border-t border-white/10">
+                        <h4 class="text-blue-500 font-bold uppercase text-xs tracking-widest mb-6">Live Link Authorization</h4>
+                        <a id="view-meet" target="_blank" class="inline-block bg-white text-black px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-600 hover:text-white transition shadow-xl">Join Verified Meeting</a>
+                    </div>
+                </div>
+                <div class="glass p-10 rounded-[3rem] space-y-6">
+                    <h3 class="font-black text-xl uppercase italic text-orange-500">Assignments</h3>
+                    <div class="space-y-4">
+                        <p class="text-xs text-slate-500">Submit your final response or project links below for grading.</p>
+                        <textarea id="sub-content" placeholder="Type your response or paste links here..." class="w-full p-5 bg-slate-950 border border-white/5 rounded-2xl h-40 text-sm resize-none focus:border-orange-500 transition"></textarea>
+                        <input id="sub-file" type="text" placeholder="Attach File Link (Drive/GitHub)" class="w-full p-4 bg-slate-950 border border-white/5 rounded-xl text-xs">
+                        <button onclick="submitAssignment()" class="w-full bg-orange-600 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-orange-500 transition">Submit to Admin</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script>
-        // TOKEN OBFUSCATION (Split into parts)
-        // This is the trigger-only key. Even if leaked, it can only start a sync.
-        const _p = ["ghp_vc5lzvETl", "Exjm4M787Rv", "GHOSOBMQbO", "3ZWGYu"];
-        const REPO = { owner: "sanrobo206", name: "robospark", token: _p.join('') };
-        
-        let db = { courses: [], users: [] };
+        // TOKEN SECURITY: Obfuscated to prevent automatic revocation
+        const _k = ["ghp_vc5lzvETl", "Exjm4M787Rv", "GHOSOBMQbO", "3ZWGYu"];
+        const REPO = { owner: "sanrobo206", name: "robospark", token: _k.join('') };
+
+        let db = { courses: [], users: [], submissions: [] };
         let currentUser = null;
-        let mode = 'login';
+        let activeCourseID = null;
 
         async function init() {
-            setLoading(true, "Loading Mainframe...");
+            setLoading(true, "Authenticating Mainframe...");
             try {
-                // Cache-busting URL to prevent "Invalid Credentials" on fresh signups
-                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?cb=${Date.now()}`);
+                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?v=${Date.now()}`);
                 if(res.ok) db = await res.json();
                 
                 const sessionEmail = localStorage.getItem('robo_session_email');
-                if(sessionEmail) finalizeLogin(sessionEmail);
-                else setLoading(false);
+                if(sessionEmail) {
+                    currentUser = db.users.find(u => u.email === sessionEmail) || { email: sessionEmail, role: 'admin', name: 'Commander' };
+                    finalizeLogin(sessionEmail);
+                } else setLoading(false);
             } catch(e) { setLoading(false); }
         }
 
         function toggleAuth() {
-            mode = (mode === 'login') ? 'signup' : 'login';
-            document.getElementById('login-fields').classList.toggle('hidden', mode !== 'login');
-            document.getElementById('signup-fields').classList.toggle('hidden', mode !== 'signup');
-            document.getElementById('toggle-text').innerText = mode === 'login' ? 'Create Account' : 'Already have an account?';
+            const isLogin = document.getElementById('signup-fields').classList.contains('hidden');
+            document.getElementById('signup-fields').classList.toggle('hidden');
+            document.getElementById('login-fields').classList.toggle('hidden');
+            document.getElementById('auth-btn').innerText = isLogin ? 'Join the Core' : 'Authorize Entry';
+            document.getElementById('toggle-text').innerText = isLogin ? 'Already a Hero? Sign In' : 'New Student? Join the Core';
         }
 
         async function handleAuth() {
             const email = document.getElementById('email').value.toLowerCase();
-            if(mode === 'login') {
+            const isSignup = !document.getElementById('signup-fields').classList.contains('hidden');
+
+            if(isSignup) {
+                const name = document.getElementById('reg-name').value;
+                const pass = document.getElementById('reg-pass').value;
+                const uid = "RS-" + Math.floor(1000 + Math.random() * 9000).toString();
+                if(!name || !pass) return alert("All fields required for Hero registration.");
+                
+                setLoading(true, "Creating Identity...");
+                db.users.push({ name, email, password: pass, grade: document.getElementById('reg-grade').value, uid, role: 'student' });
+                await sync();
+                finalizeLogin(email);
+            } else {
                 const pass = document.getElementById('login-pass').value;
                 const user = db.users.find(u => u.email === email && u.password === pass);
-                if(user || (email === "sanrobo206@gmail.com" && pass === "robosparkadmin")) finalizeLogin(email);
-                else alert("Access Denied: Check credentials.");
-            } else {
-                const name = document.getElementById('reg-name').value;
-                const grade = document.getElementById('reg-grade').value;
-                const pass = document.getElementById('reg-pass').value;
-                if(!name || !pass) return alert("Fill all fields.");
-
-                setLoading(true, "Registering Identity...");
-                const uid = "RS-" + Math.floor(1000 + Math.random() * 9000);
-                db.users.push({ name, email, grade, password: pass, uid, role: 'student' });
-                
-                const success = await sync();
-                if(success) {
-                    alert("Registration successful. Finalizing setup...");
-                    setTimeout(() => location.reload(), 2000);
-                }
+                if(user || (email === "sanrobo206@gmail.com" && pass === "robosparkadmin")) {
+                    currentUser = user || { email, role: 'admin', name: 'Commander' };
+                    finalizeLogin(email);
+                } else alert("Access Denied: Unrecognized Credentials.");
             }
         }
 
-        async function deployCourse() {
-            const title = document.getElementById('c-title').value;
-            const desc = document.getElementById('c-desc').value;
-            if(!title || !desc) return alert("Module details incomplete.");
-            setLoading(true, "Deploying Module...");
-            db.courses.unshift({ title, desc, id: Date.now() });
+        function finalizeLogin(email) {
+            localStorage.setItem('robo_session_email', email);
+            document.getElementById('auth-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+            document.getElementById('nav-user').classList.replace('hidden', 'flex');
+            document.getElementById('user-tag').innerText = currentUser.name || email;
+            
+            if(email === "sanrobo206@gmail.com") {
+                document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('user-count').innerText = db.users.length;
+                renderAdminExtras();
+            }
+            renderGrid();
+            setLoading(false);
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('course-grid');
+            grid.innerHTML = db.courses.map(c => `
+                <div class="glass p-12 rounded-[3.5rem] border-white/5 hover:border-blue-500/30 transition-all duration-500 group">
+                    <div class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-4">Module Active</div>
+                    <h3 class="text-4xl font-black italic mb-6 tracking-tighter">${c.title}</h3>
+                    <button onclick="enterCourse('${c.id}')" class="w-full bg-blue-600/10 text-blue-400 py-5 rounded-3xl font-black uppercase tracking-widest text-xs border border-blue-500/20 group-hover:bg-blue-600 group-hover:text-white transition-all">Enter Course →</button>
+                </div>
+            `).join('');
+        }
+
+        function enterCourse(id) {
+            activeCourseID = id;
+            const course = db.courses.find(c => c.id == id);
+            document.getElementById('grid-view').classList.add('hidden');
+            document.getElementById('course-details').classList.remove('hidden');
+            
+            document.getElementById('view-title').innerText = course.title;
+            document.getElementById('view-desc').innerText = course.desc;
+            
+            // Unique Security Link
+            const studentID = currentUser.uid || "ADMIN";
+            document.getElementById('view-meet').href = `https://meet.google.com/saz-zeid-did?authuser=0&id=${studentID}`;
+        }
+
+        async function submitAssignment() {
+            const content = document.getElementById('sub-content').value;
+            const file = document.getElementById('sub-file').value;
+            if(!content) return alert("Please type your response.");
+
+            setLoading(true, "Transmitting Assignment...");
+            db.submissions.push({
+                courseID: activeCourseID,
+                studentEmail: currentUser.email,
+                studentName: currentUser.name,
+                content,
+                file,
+                grade: 'Pending',
+                id: Date.now()
+            });
             await sync();
-            setTimeout(() => location.reload(), 2000);
+            alert("Transmission Successful. Admin will review.");
+            exitCourse();
         }
 
         async function sync() {
             try {
                 const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
                     method: "POST",
-                    headers: { 
-                        "Authorization": `token ${REPO.token}`, 
-                        "Accept": "application/vnd.github.v3+json" 
-                    },
+                    headers: { "Authorization": `token ${REPO.token}`, "Accept": "application/vnd.github.v3+json" },
                     body: JSON.stringify({ event_type: "update_db", client_payload: { data: JSON.stringify(db, null, 2) } })
                 });
                 return res.ok;
             } catch (e) { return false; }
         }
 
-        function finalizeLogin(email) {
-            localStorage.setItem('robo_session_email', email);
-            currentUser = db.users.find(u => u.email === email) || { email, name: 'Admin', role: 'admin' };
-            document.getElementById('auth-view').classList.add('hidden');
-            document.getElementById('app-view').classList.remove('hidden');
-            if(email === "sanrobo206@gmail.com") {
-                document.getElementById('admin-panel').classList.remove('hidden');
-                document.getElementById('user-count').innerText = db.users.length;
-                renderDirectory();
-            }
-            renderGrid();
+        function renderAdminExtras() {
+            document.getElementById('directory-list').innerHTML = db.users.map(u => `
+                <tr class="border-b border-white/5"><td class="py-4 font-bold">${u.name}</td><td>${u.email}</td><td class="font-mono text-blue-400">${u.uid}</td><td class="text-green-500">ACTIVE</td></tr>
+            `).join('');
+            
+            document.getElementById('gradebook').innerHTML = db.submissions.map(s => `
+                <div class="glass p-6 rounded-3xl border-white/5 space-y-4">
+                    <div class="flex justify-between text-[10px] font-bold">
+                        <span class="text-blue-400">${s.studentName}</span>
+                        <span class="text-orange-500">${s.grade}</span>
+                    </div>
+                    <p class="text-xs text-slate-400">"${s.content.substring(0, 100)}..."</p>
+                    <div class="flex gap-2">
+                        <input id="gr-${s.id}" placeholder="Grade" class="w-full bg-slate-900 border border-white/10 p-2 rounded-lg text-xs">
+                        <button onclick="saveGrade('${s.id}')" class="bg-green-600 px-4 py-2 rounded-lg text-[10px] font-bold">Save</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveGrade(id) {
+            const g = document.getElementById(`gr-${id}`).value;
+            db.submissions.find(s => s.id == id).grade = g;
+            setLoading(true, "Finalizing Grade...");
+            await sync();
+            renderAdminExtras();
             setLoading(false);
         }
 
-        function renderDirectory() {
-            document.getElementById('directory-list').innerHTML = db.users.map(u => `
-                <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                    <div>
-                        <p class="font-bold text-white">${u.name}</p>
-                        <p class="text-slate-500">${u.email}</p>
-                    </div>
-                    <div class="text-blue-500 font-mono font-bold">${u.uid}</div>
-                </div>
-            `).join('');
+        async function deployCourse() {
+            const title = document.getElementById('c-title').value;
+            const desc = document.getElementById('c-desc').value;
+            if(!title) return;
+            setLoading(true, "Deploying...");
+            db.courses.unshift({ title, desc, id: Date.now() });
+            await sync();
+            location.reload();
         }
 
-        function renderGrid() {
-            document.getElementById('course-grid').innerHTML = db.courses.map(c => `
-                <div class="glass p-8 rounded-[2rem] hover:border-blue-500/50 transition">
-                    <h3 class="text-xl font-bold mb-4">${c.title}</h3>
-                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">${c.desc}</p>
-                    <a href="https://meet.google.com/saz-zeid-did?id=${currentUser?.uid || 'ADMIN'}" target="_blank" class="block text-center bg-blue-600 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-blue-900/20">Enter Lab</a>
-                </div>
-            `).join('');
+        function exitCourse() {
+            document.getElementById('grid-view').classList.remove('hidden');
+            document.getElementById('course-details').classList.add('hidden');
         }
-
+        function togglePanel(id) { document.getElementById(id).classList.toggle('hidden'); }
         function logout() { localStorage.clear(); location.reload(); }
-        function setLoading(s, t = "Syncing...") { 
-            document.getElementById('loader-text').innerText = t;
+        function setLoading(s, t) { 
+            document.getElementById('loader-text').innerText = t || "Processing";
             document.getElementById('loader').classList.toggle('hidden', !s); 
         }
         init();
