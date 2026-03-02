@@ -6,7 +6,7 @@
       "assignments": [
         {
           "id": 1709320000001,
-          "task": "Access the Mainframe and post a 'System Ready' message to confirm your connection."
+          "task": "Access the Mainframe and post a System Ready message to confirm your connection."
         }
       ]
     }
@@ -18,6 +18,13 @@
       "password": "robosparkadmin",
       "uid": "ADM-001",
       "role": "admin"
+    },
+    {
+      "name": "Test One",
+      "email": "12.sanatansinha@gmail.com",
+      "password": "iamCOOL123!",
+      "uid": "RS-6275",
+      "role": "student"
     }
   ],
   "submissions": []
