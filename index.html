@@ -9,131 +9,145 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
         .sidebar { background: #ffffff; border-right: 1px solid #e2e8f0; width: 280px; position: fixed; height: 100vh; z-index: 40; }
-        .card-schoology { background: white; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.2s; }
-        .card-schoology:hover { border-color: #3b82f6; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .btn-action { background: #005aab; color: white; border-radius: 8px; font-weight: 600; padding: 10px 20px; cursor: pointer; border: none; }
+        .card-schoology { background: white; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card-schoology:hover { border-color: #3b82f6; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1); }
+        .btn-action { background: #005aab; color: white; border-radius: 8px; font-weight: 700; padding: 12px 24px; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-action:hover { background: #004482; transform: translateY(-1px); }
         .hidden { display: none !important; }
-        input, textarea, select { border: 1px solid #cbd5e1 !important; border-radius: 6px !important; padding: 12px !important; width: 100%; outline: none; }
-        #sync-indicator { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: white; padding: 12px 20px; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #3b82f6; }
+        input, textarea, select { border: 1px solid #cbd5e1 !important; border-radius: 8px !important; padding: 14px !important; width: 100%; outline: none; font-size: 14px; }
+        input:focus { border-color: #005aab !important; ring: 2px ring #3b82f6; }
+        #sync-indicator { position: fixed; top: 20px; right: 20px; z-index: 1000; background: #005aab; color: white; padding: 10px 20px; border-radius: 8px; font-size: 10px; font-weight: 900; letter-spacing: 1px; }
         .main-wrapper { margin-left: 280px; width: calc(100% - 280px); }
+        .grade-input { width: 80px !important; padding: 8px !important; text-align: center; }
     </style>
 </head>
 <body class="flex min-h-screen">
 
-    <div id="sync-indicator" class="hidden">SYNCING TO DATABASE...</div>
+    <div id="sync-indicator" class="hidden uppercase">Uplink Active...</div>
 
     <aside id="main-sidebar" class="sidebar hidden flex flex-col">
         <div class="p-8">
             <div class="flex items-center gap-3 mb-1">
-                <div class="w-10 h-10 bg-[#005aab] rounded-lg flex items-center justify-center text-white font-bold text-xl">RS</div>
-                <span class="text-xl font-extrabold tracking-tight text-[#005aab]">ROBOSPARK</span>
+                <div class="w-10 h-10 bg-[#005aab] rounded-lg flex items-center justify-center text-white font-black text-xl">RS</div>
+                <span class="text-xl font-black tracking-tighter text-[#005aab]">ROBOSPARK</span>
             </div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">by Sanatan Sinha</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">by Sanatan Sinha</p>
         </div>
         <nav class="flex-1 px-4 space-y-2">
-            <button onclick="navigate('dashboard')" class="w-full text-left p-4 rounded-xl hover:bg-slate-50 font-semibold text-slate-600 transition">Dashboard</button>
-            <button onclick="navigate('grades')" class="w-full text-left p-4 rounded-xl hover:bg-slate-50 font-semibold text-slate-600 transition">Gradebook</button>
+            <button onclick="navigate('dashboard')" class="w-full text-left p-4 rounded-xl hover:bg-blue-50 font-bold text-slate-600 transition">Dashboard</button>
+            <button onclick="navigate('grades')" class="w-full text-left p-4 rounded-xl hover:bg-blue-50 font-bold text-slate-600 transition">Gradebook</button>
         </nav>
         <div class="p-6 border-t border-slate-100 bg-slate-50/50">
-            <p id="user-display-name" class="text-sm font-bold truncate text-slate-800"></p>
-            <p id="user-display-uid" class="text-[10px] font-mono text-slate-400 mb-4"></p>
-            <button onclick="logout()" class="w-full py-2 bg-white border border-red-200 text-red-500 rounded-lg text-xs font-bold hover:bg-red-50 transition">Sign Out</button>
+            <p id="user-display-name" class="text-sm font-black truncate text-slate-800"></p>
+            <p id="user-display-uid" class="text-[10px] font-mono text-slate-400 mb-4 font-bold"></p>
+            <button onclick="logout()" class="w-full py-2 bg-white border border-red-200 text-red-500 rounded-lg text-xs font-black hover:bg-red-50 transition uppercase">Sign Out</button>
         </div>
     </aside>
 
     <div id="main-content" class="flex-1">
-        <section id="auth-view" class="max-w-md mx-auto mt-32 p-10 bg-white rounded-3xl shadow-2xl border border-slate-100">
-            <div class="text-center mb-8">
-                <h1 class="text-2xl font-black text-slate-900">USER PORTAL</h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Access Mainframe</p>
+        <section id="auth-view" class="max-w-md mx-auto mt-32 p-10 bg-white rounded-[2rem] shadow-2xl border border-slate-100">
+            <div class="text-center mb-10">
+                <div class="inline-block w-16 h-16 bg-[#005aab] rounded-2xl flex items-center justify-center text-white font-black text-3xl mb-4 mx-auto">RS</div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tighter">ROBOSPARK</h1>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-2">by Sanatan Sinha</p>
             </div>
             <div class="space-y-4">
                 <input id="email" type="email" placeholder="Email Address">
-                <div id="login-fields" class="space-y-4"><input id="login-pass" type="password" placeholder="Password"></div>
+                <div id="login-fields" class="space-y-4"><input id="login-pass" type="password" placeholder="Access Password"></div>
                 <div id="signup-fields" class="hidden space-y-4">
-                    <input id="reg-name" placeholder="Full Name">
+                    <input id="reg-name" placeholder="Your Full Name">
                     <input id="reg-pass" type="password" placeholder="Create Password">
                 </div>
-                <button onclick="handleAuth()" id="auth-btn" class="w-full btn-action py-4 uppercase tracking-widest shadow-lg shadow-blue-900/20">Sign In</button>
-                <p onclick="toggleAuth()" class="text-center text-[10px] text-blue-600 cursor-pointer font-bold mt-6 uppercase hover:underline">New User? Register</p>
+                <button onclick="handleAuth()" id="auth-btn" class="w-full btn-action uppercase tracking-widest text-xs">Initialize Session</button>
+                <p onclick="toggleAuth()" class="text-center text-[10px] text-blue-600 cursor-pointer font-black mt-8 uppercase hover:underline tracking-widest">New User? Register Profile</p>
             </div>
         </section>
 
         <div id="app-view" class="hidden p-10 main-wrapper">
             <section id="admin-panel" class="hidden mb-12 space-y-8">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-3xl font-black text-slate-900">Command Center</h2>
-                    <div class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-tighter">Session 2026</div>
+                    <div>
+                        <h2 class="text-4xl font-black text-slate-900 tracking-tight">Master Control</h2>
+                        <p class="text-sm font-bold text-blue-600 uppercase tracking-widest mt-1">Academic Session 2026</p>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="card-schoology p-6">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-4">Module Management</h3>
-                        <div class="flex gap-2">
-                            <input id="c-title" placeholder="Module Name">
-                            <button onclick="createModule()" class="btn-action">Deploy</button>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="card-schoology p-8">
+                        <h3 class="text-xs font-black text-slate-400 uppercase mb-6 tracking-widest">Deploy New Module</h3>
+                        <div class="flex gap-3">
+                            <input id="c-title" placeholder="Module Title">
+                            <button onclick="createModule()" class="btn-action whitespace-nowrap">Deploy</button>
                         </div>
                     </div>
-                    <div class="card-schoology p-6">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-4">Active User List</h3>
-                        <div id="directory-list" class="grid grid-cols-2 gap-2 text-[10px] font-bold"></div>
+                    <div class="card-schoology p-8">
+                        <h3 class="text-xs font-black text-slate-400 uppercase mb-6 tracking-widest">User Directory</h3>
+                        <div id="directory-list" class="grid grid-cols-2 gap-3 text-[10px] font-bold"></div>
                     </div>
                 </div>
+                
                 <div class="card-schoology overflow-hidden">
-                    <div class="p-4 bg-slate-50 border-b font-bold text-xs text-slate-500 uppercase">Schoology Master Gradebook</div>
+                    <div class="p-6 bg-slate-50 border-b flex justify-between items-center">
+                        <h3 class="font-black text-slate-700 uppercase text-xs tracking-widest">Schoology Gradebook View</h3>
+                    </div>
                     <table class="w-full text-left">
-                        <thead class="text-[10px] uppercase text-slate-400 font-bold border-b">
-                            <tr><th class="p-4">User</th><th class="p-4">Submissions</th><th class="p-4">GPA Average</th><th class="p-4 text-right">Action</th></tr>
+                        <thead class="text-[10px] uppercase text-slate-400 font-black border-b bg-white">
+                            <tr><th class="p-6">User Identity</th><th class="p-6">Missions Done</th><th class="p-6">Performance Average</th><th class="p-6 text-right">Review</th></tr>
                         </thead>
-                        <tbody id="schoology-body" class="text-sm"></tbody>
+                        <tbody id="schoology-body" class="text-sm font-bold text-slate-700"></tbody>
                     </table>
                 </div>
             </section>
 
-            <section id="dashboard-view" class="space-y-8">
-                <h2 class="text-3xl font-black text-slate-900">Your Missions</h2>
-                <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <section id="dashboard-view" class="space-y-10">
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Current Missions</h2>
+                <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
             </section>
 
-            <section id="module-details" class="hidden space-y-8">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigate('dashboard')" class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition text-slate-600">←</button>
-                    <h1 id="mod-title-hero" class="text-4xl font-black text-slate-900"></h1>
+            <section id="module-details" class="hidden space-y-10">
+                <div class="flex items-center gap-6">
+                    <button onclick="navigate('dashboard')" class="w-12 h-12 rounded-2xl border border-slate-200 flex items-center justify-center hover:bg-white transition shadow-sm">←</button>
+                    <h1 id="mod-title-hero" class="text-5xl font-black text-slate-900 tracking-tighter"></h1>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-gradient-to-r from-blue-700 to-blue-500 p-8 rounded-2xl text-white shadow-xl">
-                            <h2 class="text-xl font-bold mb-2 italic">Live Training Terminal</h2>
-                            <p class="text-blue-100 text-sm mb-6">Connect with Sanatan Sinha for real-time guidance.</p>
-                            <a id="mod-meet-link" target="_blank" class="bg-white text-blue-700 px-6 py-3 rounded-xl font-black text-xs uppercase shadow-lg">Join Google Meet</a>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="bg-[#005aab] p-10 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+                            <div class="relative z-10">
+                                <h2 class="text-2xl font-black mb-2 italic">Live Training Terminal</h2>
+                                <p class="text-blue-100 font-medium mb-8">Access the live session hosted by Sanatan Sinha.</p>
+                                <a id="mod-meet-link" target="_blank" class="bg-white text-[#005aab] px-8 py-4 rounded-xl font-black text-xs uppercase shadow-xl hover:scale-105 transition inline-block">Join Google Meet</a>
+                            </div>
                         </div>
-                        <div id="admin-add-assign" class="hidden card-schoology p-6 border-dashed border-2 border-blue-200 bg-blue-50/20">
-                            <p class="text-[10px] font-black text-blue-600 uppercase mb-4">Add Mission Objective</p>
-                            <textarea id="new-assign-text" placeholder="Objective details..." class="mb-4"></textarea>
-                            <button onclick="addAssignmentToModule()" class="btn-action">Add Mission</button>
+                        <div id="admin-add-assign" class="hidden card-schoology p-8 bg-blue-50/30 border-dashed border-2 border-blue-200">
+                            <p class="text-[10px] font-black text-blue-600 uppercase mb-4 tracking-widest">New Mission Objective</p>
+                            <textarea id="new-assign-text" placeholder="Objective details..." class="mb-6 h-32"></textarea>
+                            <button onclick="addAssignmentToModule()" class="btn-action">Publish Mission</button>
                         </div>
                         <div id="assign-list" class="space-y-4"></div>
                     </div>
-                    <div class="card-schoology p-6 h-fit sticky top-10">
-                        <h3 class="font-bold text-slate-800 mb-4">Mission Submission</h3>
-                        <select id="assign-selector" class="mb-4"></select>
-                        <textarea id="sub-content" placeholder="Report content or URLs..." class="h-40 mb-4"></textarea>
-                        <button onclick="submitAssignment()" class="w-full btn-action bg-orange-600 hover:bg-orange-700 transition">Transmit Report</button>
+                    <div class="card-schoology p-8 h-fit sticky top-10">
+                        <h3 class="font-black text-slate-900 mb-6 uppercase text-xs tracking-widest">Report Transmission</h3>
+                        <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">Target Mission</label>
+                        <select id="assign-selector" class="mb-6 font-bold text-slate-700"></select>
+                        <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">Data Content</label>
+                        <textarea id="sub-content" placeholder="Paste links or write report..." class="h-48 mb-6"></textarea>
+                        <button onclick="submitAssignment()" class="w-full btn-action bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-900/20 uppercase text-xs">Transmit to Base</button>
                     </div>
                 </div>
             </section>
 
-            <section id="grades-view" class="hidden space-y-8">
-                <h2 class="text-3xl font-black text-slate-900">Performance Report</h2>
-                <div id="student-transcript" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <section id="grades-view" class="hidden space-y-10">
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Performance Transcript</h2>
+                <div id="student-transcript" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
             </section>
         </div>
     </div>
 
-    <div id="grading-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] flex items-center justify-center hidden p-6">
-        <div class="bg-white w-full max-w-4xl rounded-3xl p-10 h-[85vh] overflow-y-auto shadow-2xl relative">
-            <button onclick="toggleElement('grading-modal')" class="absolute top-6 right-6 text-slate-400 font-bold uppercase text-[10px]">Close Terminal</button>
-            <h3 id="inspect-name" class="text-3xl font-black text-slate-900 mb-8"></h3>
-            <div id="inspect-subs" class="space-y-6"></div>
+    <div id="grading-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] flex items-center justify-center hidden p-6">
+        <div class="bg-white w-full max-w-5xl rounded-[3rem] p-12 h-[85vh] overflow-y-auto shadow-2xl relative border border-white/20">
+            <button onclick="toggleElement('grading-modal')" class="absolute top-10 right-10 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-slate-900 transition">Close Terminal</button>
+            <h3 id="inspect-name" class="text-4xl font-black text-slate-900 mb-2 tracking-tighter"></h3>
+            <p class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-12">Submission Archive</p>
+            <div id="inspect-subs" class="space-y-8"></div>
         </div>
     </div>
 
@@ -143,25 +157,26 @@
         let db = { courses: [], users: [], submissions: [] };
         let currentUser = null, activeMod = null;
 
+        // AUTH ERROR FIX: Forced data fetch before login check
         async function fetchFreshData() {
             setLoading(true);
             try {
-                const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json?t=${Date.now()}`, {
+                const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json?cb=${Date.now()}`, {
                     headers: { "Authorization": `Bearer ${REPO.token}`, "Accept": "application/vnd.github.v3.raw" }
                 });
                 if(res.ok) {
                     db = await res.json();
                     return true;
                 }
-            } catch(e) { console.error("Sync Failure"); }
+            } catch(e) { console.error("Database Uplink Failed"); }
             finally { setLoading(false); }
             return false;
         }
 
         async function init() {
-            const hasData = await fetchFreshData();
+            await fetchFreshData();
             const savedEmail = localStorage.getItem('robo_session_email');
-            if(savedEmail && hasData) {
+            if(savedEmail) {
                 finalizeLogin(savedEmail);
             }
         }
@@ -170,10 +185,13 @@
             const emailInput = document.getElementById('email').value.trim().toLowerCase();
             const isSignup = !document.getElementById('signup-fields').classList.contains('hidden');
             
+            // Re-fetch before every auth attempt to prevent "Invalid Credentials" on fresh accounts
+            await fetchFreshData();
+
             if(isSignup) {
                 const name = document.getElementById('reg-name').value.trim();
                 const pass = document.getElementById('reg-pass').value.trim();
-                if(!name || !pass || !emailInput) return alert("Missing Info");
+                if(!name || !pass || !emailInput) return alert("Error: Missing Identity Data");
                 const newUser = { name, email: emailInput, password: pass, uid: "RS-"+Math.floor(Math.random()*9000), role: 'student' };
                 db.users.push(newUser);
                 if(await sync()) {
@@ -181,35 +199,33 @@
                 }
             } else {
                 const pass = document.getElementById('login-pass').value.trim();
-                // Check Admin bypass first
+                // Admin Hard-Override
                 if(emailInput === "sanrobo206@gmail.com" && pass === "robosparkadmin") {
                     finalizeLogin(emailInput);
                     return;
                 }
-                // Check Database
                 const user = db.users.find(u => u.email === emailInput && u.password === pass);
                 if(user) {
                     finalizeLogin(emailInput);
                 } else {
-                    alert("Invalid Credentials");
+                    alert("INVALID CREDENTIALS: ACCESS DENIED");
                 }
             }
         }
 
         function finalizeLogin(email) {
-            // Find user again to ensure role hasn't changed
-            currentUser = db.users.find(u => u.email === email);
-            
-            // Hardcoded Admin Logic
+            // Find verified record in fresh DB
+            let record = db.users.find(u => u.email === email);
             if(email === "sanrobo206@gmail.com") {
-                currentUser = { email, role: 'admin', name: 'Sanatan Sinha', uid: 'ADMIN-01' };
+                record = { email, role: 'admin', name: 'Sanatan Sinha', uid: 'ADMIN-01' };
             }
 
-            if(!currentUser) {
+            if(!record) {
                 logout();
                 return;
             }
 
+            currentUser = record;
             localStorage.setItem('robo_session_email', email);
             document.getElementById('auth-view').classList.add('hidden');
             document.getElementById('main-sidebar').classList.remove('hidden');
@@ -235,11 +251,11 @@
                     body: JSON.stringify({ event_type: "update_db", client_payload: { data: JSON.stringify(db, null, 2) } })
                 });
                 if (response.status === 204) {
-                    await new Promise(r => setTimeout(r, 4000));
+                    await new Promise(r => setTimeout(r, 4500)); // Sync buffer
                     await fetchFreshData();
                     return true;
                 }
-            } catch (e) { alert("Cloud Error"); }
+            } catch (e) { alert("Mainframe Sync Error"); }
             finally { setLoading(false); }
             return false;
         }
@@ -257,10 +273,10 @@
 
         function renderGrid() {
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
-                <div class="card-schoology p-6 cursor-pointer" onclick="openModule('${c.id}')">
-                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold mb-4">M</div>
-                    <h3 class="text-xl font-bold mb-2 text-slate-800">${c.title}</h3>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase">${(c.assignments || []).length} Objectives</p>
+                <div class="card-schoology p-8 cursor-pointer group" onclick="openModule('${c.id}')">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">M</div>
+                    <h3 class="text-2xl font-black mb-2 text-slate-800 tracking-tighter">${c.title}</h3>
+                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${(c.assignments || []).length} Objectives</p>
                 </div>`).join('');
         }
 
@@ -279,21 +295,21 @@
             const selector = document.getElementById('assign-selector');
             const assigns = activeMod.assignments || [];
             list.innerHTML = assigns.map((a, i) => `
-                <div class="card-schoology p-4 flex justify-between items-center bg-white border-l-4 border-blue-600">
-                    <div><span class="text-[10px] font-bold text-blue-500 uppercase">Task ${i+1}</span><p class="font-bold text-slate-700">${a.task}</p></div>
-                    ${currentUser.role === 'admin' ? `<button onclick="deleteAssignment('${a.id}')" class="text-red-500 text-[10px] font-black hover:underline">DELETE</button>` : ''}
+                <div class="card-schoology p-6 flex justify-between items-center bg-white border-l-8 border-blue-600">
+                    <div><span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Objective ${i+1}</span><p class="font-bold text-slate-700 text-lg">${a.task}</p></div>
+                    ${currentUser.role === 'admin' ? `<button onclick="deleteAssignment('${a.id}')" class="text-red-500 text-[10px] font-black uppercase tracking-tighter hover:underline">Delete</button>` : ''}
                 </div>`).join('');
-            selector.innerHTML = assigns.map((a, i) => `<option value="${i}">Mission ${i+1}</option>`).join('');
+            selector.innerHTML = assigns.map((a, i) => `<option value="${i}">Mission ${i+1}: ${a.task.substring(0,25)}...</option>`).join('');
         }
 
         function renderAdminExtras() {
-            document.getElementById('directory-list').innerHTML = db.users.map(u => `<div class="p-2 bg-slate-50 rounded border text-slate-600 text-[9px] truncate">${u.name}</div>`).join('');
+            document.getElementById('directory-list').innerHTML = db.users.map(u => `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-slate-600 text-[9px] truncate font-black uppercase">${u.name}</div>`).join('');
             const body = document.getElementById('schoology-body');
             body.innerHTML = db.users.filter(u => u.role !== 'admin').map(u => {
                 const subs = db.submissions.filter(s => s.studentEmail === u.email);
                 const graded = subs.filter(s => s.grade !== 'PENDING');
                 const avg = graded.length ? (graded.reduce((a, b) => a + parseInt(b.grade), 0) / graded.length).toFixed(1) + '%' : '---';
-                return `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 font-bold text-slate-700">${u.name}</td><td class="p-4 text-slate-500">${subs.length} Items</td><td class="p-4 font-black text-blue-600">${avg}</td><td class="p-4 text-right"><button onclick="inspectUser('${u.email}')" class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">GRADE</button></td></tr>`;
+                return `<tr class="border-b hover:bg-blue-50/30 transition"><td class="p-6 font-black text-slate-800">${u.name}</td><td class="p-6 text-slate-500 font-bold">${subs.length} Items</td><td class="p-6 font-black text-blue-600 text-lg">${avg}</td><td class="p-6 text-right"><button onclick="inspectUser('${u.email}')" class="btn-action !p-2 !text-[10px] uppercase tracking-tighter">Grade Mission</button></td></tr>`;
             }).join('');
         }
 
@@ -302,12 +318,12 @@
             const subs = db.submissions.filter(s => s.studentEmail === email);
             document.getElementById('inspect-name').innerText = user.name;
             document.getElementById('inspect-subs').innerHTML = subs.map(s => `
-                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                    <div class="flex justify-between mb-4"><span class="text-[10px] font-black text-blue-600 uppercase">${s.moduleTitle}</span><span class="font-black text-slate-800">${s.grade}</span></div>
-                    <p class="font-bold mb-2 text-slate-700">Objective: ${s.task}</p>
-                    <div class="p-4 bg-white rounded-xl border border-slate-200 mb-4 text-sm text-slate-600 italic">"${s.content}"</div>
-                    <div class="flex gap-2"><input id="score-${s.id}" type="number" placeholder="Grade %" class="!w-24 !p-2 !text-xs"><button onclick="saveGrade('${s.id}')" class="btn-action !p-2 !text-xs">Save</button></div>
-                </div>`).join('') || "<p class='text-center text-slate-400'>No submissions yet.</p>";
+                <div class="p-8 bg-slate-50 rounded-[2rem] border border-slate-200">
+                    <div class="flex justify-between items-center mb-6"><span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${s.moduleTitle}</span><span class="font-black text-2xl text-slate-800 italic">${s.grade}</span></div>
+                    <p class="font-bold mb-4 text-slate-800 text-lg">Objective: ${s.task}</p>
+                    <div class="p-6 bg-white rounded-2xl border border-slate-200 mb-6 text-sm text-slate-600 font-medium leading-relaxed italic">"${s.content}"</div>
+                    <div class="flex items-center gap-4"><input id="score-${s.id}" type="number" placeholder="Grade %" class="grade-input"><button onclick="saveGrade('${s.id}')" class="btn-action bg-green-600 hover:bg-green-700 text-xs">Post Grade</button></div>
+                </div>`).join('') || "<p class='text-center py-20 text-slate-400 font-black uppercase tracking-widest'>No Data Transmitted Yet</p>";
             document.getElementById('grading-modal').classList.remove('hidden');
         }
 
@@ -316,21 +332,20 @@
             if(!score) return;
             db.submissions.find(s => s.id == sid).grade = score + "%";
             if(await sync()) {
+                const sub = db.submissions.find(s => s.id == sid);
+                inspectUser(sub.studentEmail);
                 renderAdminExtras();
-                // Close only if successful
-                const email = db.submissions.find(s => s.id == sid).studentEmail;
-                inspectUser(email);
             }
         }
 
         function renderTranscript() {
             const mySubs = db.submissions.filter(s => s.studentEmail === currentUser.email);
             document.getElementById('student-transcript').innerHTML = mySubs.map(s => `
-                <div class="card-schoology p-6">
-                    <p class="text-[10px] font-bold text-blue-600 uppercase mb-2">${s.moduleTitle}</p>
-                    <p class="font-bold text-lg mb-4 text-slate-800">${s.task}</p>
-                    <div class="pt-4 border-t flex justify-between items-center"><span class="text-xs font-bold text-slate-400">MASTERY</span><span class="text-3xl font-black text-blue-600">${s.grade}</span></div>
-                </div>`).join('') || "<p class='col-span-2 text-center py-20 text-slate-400'>No graded missions yet.</p>";
+                <div class="card-schoology p-8">
+                    <p class="text-[10px] font-black text-blue-600 uppercase mb-4 tracking-widest">${s.moduleTitle}</p>
+                    <p class="font-black text-xl mb-6 text-slate-800 tracking-tight">${s.task}</p>
+                    <div class="pt-6 border-t flex justify-between items-center"><span class="text-[10px] font-black text-slate-400 uppercase">Mastery Score</span><span class="text-4xl font-black text-blue-600 italic">${s.grade}</span></div>
+                </div>`).join('') || "<p class='col-span-2 text-center py-40 text-slate-400 font-black uppercase tracking-[0.3em]'>No Graded Data</p>";
         }
 
         async function createModule() {
@@ -357,11 +372,12 @@
         async function submitAssignment() {
             const content = document.getElementById('sub-content').value.trim();
             const aIdx = document.getElementById('assign-selector').value;
-            if(!content || aIdx === null) return alert("Empty Submission");
+            if(!content || aIdx === "") return alert("Error: Report Empty");
             db.submissions.push({ studentEmail: currentUser.email, studentName: currentUser.name, moduleTitle: activeMod.title, task: activeMod.assignments[aIdx].task, content, grade: 'PENDING', id: Date.now() });
             if(await sync()) {
-                alert("Mission Transmitted");
+                alert("SUCCESS: MISSION REPORT TRANSMITTED");
                 navigate('dashboard');
+                document.getElementById('sub-content').value = '';
             }
         }
 
