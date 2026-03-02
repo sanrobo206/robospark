@@ -2,18 +2,18 @@
   "courses": [
     {
       "id": 1709320000000,
-      "title": "Welcome to RoboSpark",
+      "title": "RoboSpark Initiation",
       "assignments": [
         {
           "id": 1709320000001,
-          "task": "Introduce yourself in the submission box and tell us your goals for this course."
+          "task": "Access the Mainframe and post a 'System Ready' message to confirm your connection."
         }
       ]
     }
   ],
   "users": [
     {
-      "name": "Admin",
+      "name": "Sanatan Sinha",
       "email": "sanrobo206@gmail.com",
       "password": "robosparkadmin",
       "uid": "ADM-001",
