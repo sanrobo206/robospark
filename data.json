@@ -11,6 +11,14 @@
       ]
     }
   ],
-  "users": [],
+  "users": [
+    {
+      "name": "Test One",
+      "email": "12.sanatansinha@gmail.com",
+      "password": "iamCOOL123!",
+      "uid": "RS-6008",
+      "role": "student"
+    }
+  ],
   "submissions": []
 }
