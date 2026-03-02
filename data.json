@@ -3,17 +3,14 @@
     {
       "id": 1772422444659,
       "title": "Robotics: From Zero to Hero",
-      "assignments": []
+      "assignments": [
+        {
+          "task": "Test One",
+          "id": 1772422916196
+        }
+      ]
     }
   ],
-  "users": [
-    {
-      "name": "Test One",
-      "email": "12.sanatansinha@gmail.com",
-      "password": "iamCOOL123!",
-      "uid": "RS-7174",
-      "role": "student"
-    }
-  ],
+  "users": [],
   "submissions": []
 }
