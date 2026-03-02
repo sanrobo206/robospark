@@ -13,32 +13,31 @@
         .loader { border-top-color: #3b82f6; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* High-End Large Inputs */
         input, textarea, select { 
             background: #0f172a !important; 
             border: 2px solid #1e293b !important; 
             color: white !important; 
-            padding: 20px !important; 
+            padding: 22px !important; 
             border-radius: 20px !important; 
             font-size: 18px !important;
             width: 100%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
         }
-        input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); transform: scale(1.01); }
-        .btn-hero { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); transition: all 0.3s ease; }
+        input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
+        .btn-hero { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); transition: all 0.3s ease; cursor: pointer; }
         .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -10px #3b82f6; }
     </style>
 </head>
 <body class="min-h-screen pb-20">
 
-    <div id="loader" class="fixed inset-0 bg-slate-950 z-[100] flex flex-col items-center justify-center gap-6 transition-all duration-500">
+    <div id="loader" class="fixed inset-0 bg-slate-950 z-[100] flex flex-col items-center justify-center gap-6">
         <div class="loader w-16 h-16 border-4 border-slate-800 rounded-full"></div>
-        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] animate-pulse">Establishing Secure Uplink...</p>
+        <p id="loader-text" class="text-blue-500 font-bold text-xs uppercase tracking-[0.4em]">Mainframe Synchronizing...</p>
     </div>
 
     <nav class="fixed top-0 w-full z-50 px-10 py-6 glass flex justify-between items-center border-b border-white/5">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-blue-900/40">RS</div>
+            <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-2xl">RS</div>
             <div>
                 <div class="text-2xl font-black tracking-tighter uppercase italic">ROBO<span class="text-blue-500">SPARK</span></div>
                 <div class="text-[11px] uppercase tracking-[0.25em] text-slate-500 font-bold">by Sanatan Sinha</div>
@@ -46,70 +45,51 @@
         </div>
         <div id="nav-user" class="hidden items-center gap-8">
             <div class="text-right">
-                <p id="user-tag" class="text-sm font-black text-blue-400 uppercase tracking-widest"></p>
+                <p id="user-tag" class="text-sm font-black text-blue-400 uppercase"></p>
                 <p id="user-uid-display" class="text-[10px] font-mono text-slate-500"></p>
             </div>
-            <button onclick="logout()" class="bg-red-500/10 text-red-500 px-8 py-3 rounded-2xl text-[11px] font-black uppercase hover:bg-red-500 hover:text-white transition">Terminate Session</button>
+            <button onclick="logout()" class="bg-red-500/10 text-red-500 px-8 py-3 rounded-2xl text-[11px] font-black uppercase hover:bg-red-500 hover:text-white transition">Sign Out</button>
         </div>
     </nav>
 
     <div id="auth-view" class="pt-52 px-6 max-w-2xl mx-auto">
         <div class="text-center mb-14">
-            <h1 class="text-7xl font-black mb-6 tracking-tighter italic">Hero <span class="text-blue-500">Portal</span></h1>
-            <p class="text-slate-400 text-xl font-medium">"Robospark converts people from <span class="text-white font-bold italic underline decoration-blue-500 decoration-4 underline-offset-8">zero to hero</span> in no time."</p>
+            <h1 class="text-7xl font-black mb-6 italic tracking-tighter">Hero <span class="text-blue-500">Portal</span></h1>
+            <p class="text-slate-400 text-xl font-medium italic underline decoration-blue-500 decoration-4 underline-offset-8">"Zero to Hero in no time."</p>
         </div>
         
-        <div class="glass p-14 rounded-[4rem] shadow-2xl space-y-8 border border-white/10">
-            <input id="email" type="email" placeholder="Identity Email">
-            
-            <div id="login-fields" class="space-y-8">
-                <input id="login-pass" type="password" placeholder="Mainframe Password">
-            </div>
-
+        <div class="glass p-14 rounded-[4rem] space-y-8 border border-white/10 shadow-2xl">
+            <input id="email" type="email" placeholder="Hero Email">
+            <div id="login-fields" class="space-y-8"><input id="login-pass" type="password" placeholder="Access Password"></div>
             <div id="signup-fields" class="hidden space-y-8">
                 <input id="reg-name" placeholder="Full Hero Name">
-                <input id="reg-pass" type="password" placeholder="Create Secure Access Key">
+                <input id="reg-pass" type="password" placeholder="Create Password">
             </div>
-
-            <button onclick="handleAuth()" id="auth-btn" class="w-full btn-hero py-6 rounded-3xl font-black uppercase tracking-widest text-lg">Initialize Entry</button>
-            <p onclick="toggleAuth()" id="toggle-text" class="text-center text-xs text-slate-500 cursor-pointer hover:text-white transition uppercase font-black tracking-widest">Register New Identity</p>
+            <button onclick="handleAuth()" id="auth-btn" class="w-full btn-hero py-6 rounded-3xl font-black uppercase text-lg">Access Mainframe</button>
+            <p onclick="toggleAuth()" id="toggle-text" class="text-center text-xs text-slate-500 cursor-pointer font-black uppercase tracking-widest">New Hero? Register Here</p>
         </div>
     </div>
 
     <main id="app-view" class="hidden pt-40 px-10 max-w-7xl mx-auto">
-        
         <section id="admin-panel" class="hidden mb-20 space-y-10">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-                <div class="glass p-12 rounded-[3rem] text-center border-blue-500/20 shadow-inner">
-                    <p class="text-blue-500 font-bold text-xs uppercase mb-2 tracking-[0.2em]">Registered Heroes</p>
+                <div class="glass p-12 rounded-[3rem] text-center border-blue-500/20">
+                    <p class="text-blue-500 font-bold text-xs uppercase mb-2">Total Heroes</p>
                     <h2 id="user-count" class="text-7xl font-black italic">0</h2>
-                    <button onclick="toggleElement('details-panel')" class="mt-8 w-full bg-white/5 border border-white/10 py-4 rounded-2xl text-[11px] font-black uppercase hover:bg-white/20 transition">View Registry</button>
+                    <button onclick="toggleElement('details-panel')" class="mt-8 w-full bg-white/5 border border-white/10 py-4 rounded-2xl text-[11px] font-black uppercase hover:bg-white/20">View Directory</button>
                 </div>
                 <div class="lg:col-span-3 glass p-12 rounded-[3rem]">
-                    <h3 class="text-sm font-bold text-blue-500 uppercase mb-8 tracking-[0.4em]">Deploy New Training Module</h3>
+                    <h3 class="text-xs font-bold text-blue-500 uppercase mb-8 tracking-[0.4em]">Deploy Training Module</h3>
                     <div class="flex flex-col md:flex-row gap-6">
-                        <input id="c-title" placeholder="Module Designation (e.g. AI Core Fundamentals)" class="flex-1">
-                        <button onclick="createModule()" class="bg-blue-600 px-14 py-6 rounded-3xl font-black uppercase text-sm hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">Deploy</button>
+                        <input id="c-title" placeholder="Module Title" class="flex-1">
+                        <button onclick="createModule()" class="bg-blue-600 px-14 py-6 rounded-3xl font-black uppercase text-sm hover:bg-blue-500 transition">Deploy</button>
                     </div>
                 </div>
             </div>
-
             <div id="details-panel" class="hidden glass p-12 rounded-[3rem] overflow-hidden">
-                <h3 class="font-black text-2xl mb-8 italic uppercase tracking-tight">Hero Registry</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-base">
-                        <thead class="text-slate-500 uppercase text-[11px] tracking-[0.3em] border-b border-white/5">
-                            <tr><th class="pb-6">Hero Name</th><th class="pb-6">Email</th><th class="pb-6 text-right">Unique UID</th></tr>
-                        </thead>
-                        <tbody id="directory-list" class="divide-y divide-white/5"></tbody>
-                    </table>
-                </div>
+                <table class="w-full text-left text-base"><tbody id="directory-list" class="divide-y divide-white/5"></tbody></table>
             </div>
-
-            <div class="glass p-14 rounded-[4rem]">
-                <h3 class="text-xs font-bold text-orange-500 uppercase mb-10 tracking-[0.4em]">Mission Grading Terminal</h3>
-                <div id="admin-gradebook" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
-            </div>
+            <div class="glass p-14 rounded-[4rem]"><div id="admin-gradebook" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div></div>
         </section>
 
         <div id="grid-view" class="space-y-16">
@@ -118,41 +98,25 @@
         </div>
 
         <div id="module-details" class="hidden space-y-16">
-            <button onclick="showGrid()" class="text-blue-500 font-black text-sm uppercase tracking-[0.3em] hover:text-white transition">← Return to Command Center</button>
-            
+            <button onclick="showGrid()" class="text-blue-500 font-black text-sm uppercase transition hover:text-white">← Return to Dashboard</button>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
                 <div class="lg:col-span-2 space-y-12">
                     <div class="glass p-20 rounded-[5rem] border-blue-500/10 shadow-2xl">
-                        <h1 id="mod-title" class="text-7xl font-black italic mb-8 tracking-tighter leading-[0.9]"></h1>
-                        <a id="mod-meet" target="_blank" class="inline-block bg-white text-black px-16 py-6 rounded-3xl font-black uppercase text-sm mt-8 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-105 shadow-2xl">Enter Live Classroom</a>
+                        <h1 id="mod-title" class="text-7xl font-black italic mb-8 tracking-tighter"></h1>
+                        <a id="mod-meet" target="_blank" class="inline-block bg-white text-black px-16 py-6 rounded-3xl font-black uppercase text-sm hover:bg-blue-600 hover:text-white transition">Join Google Meet</a>
                     </div>
-
                     <div id="admin-add-assign" class="hidden glass p-12 rounded-[3.5rem] border-blue-600/30">
-                        <h4 class="text-blue-500 font-bold text-xs uppercase mb-8 tracking-[0.3em]">Add Mission Objective</h4>
-                        <textarea id="new-assign-text" placeholder="Detail the technical requirements for this task..." class="h-40 mb-8"></textarea>
-                        <button onclick="addAssignmentToModule()" class="bg-blue-600 px-12 py-5 rounded-2xl font-black text-xs uppercase">Push to Syllabus</button>
+                        <textarea id="new-assign-text" placeholder="Add assignment mission..." class="h-40 mb-8"></textarea>
+                        <button onclick="addAssignmentToModule()" class="bg-blue-600 px-12 py-5 rounded-2xl font-black text-xs uppercase">Push Assignment</button>
                     </div>
-
-                    <div class="space-y-8">
-                        <h3 class="text-3xl font-black italic uppercase tracking-tight">Mission Syllabus</h3>
-                        <div id="assign-list" class="space-y-8"></div>
-                    </div>
+                    <div id="assign-list" class="space-y-8"></div>
                 </div>
-
                 <div class="glass p-14 rounded-[4rem] space-y-10 sticky top-40 h-fit border border-white/5">
-                    <h3 class="text-orange-500 font-black text-2xl uppercase italic underline underline-offset-8">Mission Report</h3>
-                    <div class="space-y-8">
-                        <div class="space-y-3">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Select Objective</label>
-                            <select id="assign-selector" class="cursor-pointer"></select>
-                        </div>
-                        <div class="space-y-3">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Report Content</label>
-                            <textarea id="sub-content" placeholder="Paste your solution documentation here..." class="h-60"></textarea>
-                        </div>
-                        <button onclick="submitAssignment()" class="w-full bg-orange-600 py-6 rounded-3xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-orange-900/30 hover:bg-orange-500 transition transform hover:-translate-y-1">Transmit Mission Data</button>
-                        <div id="personal-grade" class="text-center p-8 rounded-[2rem] bg-blue-500/10 border border-blue-500/20 hidden transition-all"></div>
-                    </div>
+                    <h3 class="text-orange-500 font-black text-2xl uppercase italic">Mission Report</h3>
+                    <select id="assign-selector"></select>
+                    <textarea id="sub-content" placeholder="Report content..." class="h-60"></textarea>
+                    <button onclick="submitAssignment()" class="w-full bg-orange-600 py-6 rounded-3xl font-black text-sm uppercase">Transmit Data</button>
+                    <div id="personal-grade" class="text-center p-8 rounded-[2rem] bg-blue-500/10 border border-blue-500/20 hidden"></div>
                 </div>
             </div>
         </div>
@@ -164,25 +128,26 @@
         let db = { courses: [], users: [], submissions: [] };
         let currentUser = null, activeMod = null;
 
-        // 1. BOOT SEQUENCE
-        async function init() {
-            setLoading(true, "Synchronizing Mainframe Database...");
+        // FORCE REFRESH FROM GITHUB (No Cache)
+        async function fetchLatestDB() {
             try {
-                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?v=${Date.now()}`);
+                const res = await fetch(`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/data.json?nocache=${Date.now()}`);
                 if(res.ok) {
                     db = await res.json();
+                    return true;
                 }
-            } catch(e) { console.warn("GitHub Link Unstable. Local database active."); }
-
-            const email = localStorage.getItem('robo_session_email');
-            if(email) {
-                const user = db.users.find(u => u.email === email);
-                if(user || email === "sanrobo206@gmail.com") finalizeLogin(email);
-                else { localStorage.clear(); setLoading(false); }
-            } else setLoading(false);
+            } catch(e) { console.error("Cloud Access Failed"); }
+            return false;
         }
 
-        // 2. AUTHENTICATION (Fixed Sign-In/Sign-Up Logic)
+        async function init() {
+            setLoading(true, "Synchronizing Mainframe...");
+            await fetchLatestDB();
+            const email = localStorage.getItem('robo_session_email');
+            if(email) finalizeLogin(email);
+            else setLoading(false);
+        }
+
         async function handleAuth() {
             const email = document.getElementById('email').value.toLowerCase();
             const isSignup = !document.getElementById('signup-fields').classList.contains('hidden');
@@ -190,28 +155,28 @@
             if(isSignup) {
                 const name = document.getElementById('reg-name').value;
                 const pass = document.getElementById('reg-pass').value;
-                if(!name || !pass || !email) return alert("Fill all fields.");
+                if(!name || !pass || !email) return alert("Fields Required");
                 
-                setLoading(true, "Registering Identity on Cloud...");
-                const uid = "RS-" + Math.floor(1000 + Math.random() * 9000);
-                const newUser = { name, email, password: pass, uid, role: 'student' };
-                
+                setLoading(true, "Registering Identity...");
+                const newUser = { name, email, password: pass, uid: "RS-"+Math.floor(Math.random()*9000), role: 'student' };
                 db.users.push(newUser);
-                const success = await sync();
-                if(success) finalizeLogin(email);
-                else alert("Sync Error: Verify GitHub Token.");
+                if(await sync()) {
+                    // Wait for GitHub to finalize before letting them login
+                    setTimeout(() => finalizeLogin(email), 3000);
+                }
             } else {
+                setLoading(true, "Verifying Identity...");
+                await fetchLatestDB(); // RE-FETCH to see newly registered users
                 const pass = document.getElementById('login-pass').value;
                 const user = db.users.find(u => u.email === email && u.password === pass);
                 if(user || (email === "sanrobo206@gmail.com" && pass === "robosparkadmin")) finalizeLogin(email);
-                else alert("Access Denied: Credentials Rejected.");
+                else { alert("Credentials Rejected. If you just registered, wait 10 seconds."); setLoading(false); }
             }
         }
 
         function finalizeLogin(email) {
             localStorage.setItem('robo_session_email', email);
             currentUser = db.users.find(u => u.email === email) || { email, role: 'admin', name: 'Sanatan Sinha', uid: 'ADMIN-01' };
-            
             document.getElementById('auth-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('nav-user').classList.replace('hidden', 'flex');
@@ -227,18 +192,29 @@
             setLoading(false);
         }
 
-        // 3. UI RENDERING
+        async function sync() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${REPO.token}`, "Accept": "application/vnd.github+json" },
+                    body: JSON.stringify({ event_type: "update_db", client_payload: { data: JSON.stringify(db, null, 2) } })
+                });
+                if (response.status === 204) {
+                    await new Promise(r => setTimeout(r, 4000));
+                    return true;
+                }
+            } catch (e) { alert("Sync Failure"); }
+            setLoading(false);
+            return false;
+        }
+
+        // --- COURSE & ADMIN LOGIC ---
         function renderGrid() {
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
-                <div class="glass p-14 rounded-[4rem] border-white/5 hover:border-blue-500/50 transition-all cursor-pointer group" onclick="openModule('${c.id}')">
-                    <div class="text-[11px] font-black text-blue-500 uppercase tracking-[0.4em] mb-6 italic">Training Module</div>
-                    <h3 class="text-4xl font-black italic mb-10 group-hover:text-blue-400 transition leading-tight">${c.title}</h3>
-                    <div class="flex justify-between items-center text-xs font-black text-slate-500 uppercase tracking-widest">
-                        <span>${(c.assignments || []).length} Objectives</span>
-                        <span class="text-blue-500">Launch →</span>
-                    </div>
-                </div>
-            `).join('') || `<p class='text-slate-600 italic py-10'>The Mainframe is currently empty.</p>`;
+                <div class="glass p-14 rounded-[4rem] border-white/5 hover:border-blue-500/50 transition cursor-pointer group" onclick="openModule('${c.id}')">
+                    <h3 class="text-4xl font-black italic mb-10 group-hover:text-blue-400 transition">${c.title}</h3>
+                    <div class="flex justify-between items-center text-xs font-black text-slate-500 uppercase"><span>Objectives: ${(c.assignments || []).length}</span><span>Launch →</span></div>
+                </div>`).join('');
         }
 
         function openModule(id) {
@@ -247,7 +223,6 @@
             document.getElementById('module-details').classList.remove('hidden');
             document.getElementById('mod-title').innerText = activeMod.title;
             document.getElementById('mod-meet').href = `https://meet.google.com/saz-zeid-did?id=${currentUser.uid}`;
-            
             if(currentUser.role === 'admin') document.getElementById('admin-add-assign').classList.remove('hidden');
             renderModuleAssignments();
         }
@@ -256,149 +231,49 @@
             const list = document.getElementById('assign-list');
             const selector = document.getElementById('assign-selector');
             const assigns = activeMod.assignments || [];
-            
-            list.innerHTML = assigns.map((a, i) => `
-                <div class="glass p-12 rounded-[3.5rem] border-white/5 hover:bg-white/5 transition-all">
-                    <p class="text-blue-500 font-black text-[11px] uppercase tracking-[0.4em] mb-4 italic">Mission Objective #${i+1}</p>
-                    <p class="text-xl text-slate-300 font-semibold leading-relaxed">${a.task}</p>
-                </div>
-            `).join('');
-
+            list.innerHTML = assigns.map((a, i) => `<div class="glass p-12 rounded-[3.5rem] border-white/5"><p class="text-blue-500 font-black text-[11px] uppercase mb-4">Objective #${i+1}</p><p class="text-xl text-slate-300 font-semibold">${a.task}</p></div>`).join('');
             selector.innerHTML = assigns.map((a, i) => `<option value="${i}">Objective #${i+1}</option>`).join('');
-            
-            const mySub = db.submissions.find(s => s.moduleTitle == activeMod.title && s.studentEmail == currentUser.email);
-            const gDiv = document.getElementById('personal-grade');
-            if(mySub) {
-                gDiv.classList.remove('hidden');
-                gDiv.innerHTML = `<p class='text-[10px] uppercase text-slate-500 font-bold mb-2 tracking-widest'>Mission Status</p>
-                                  <p class='text-4xl font-black italic text-blue-400'>${mySub.grade}</p>`;
-            } else gDiv.classList.add('hidden');
         }
 
-        // 4. CLOUD SYNCHRONIZATION (High-Security Bearer Fix)
-        async function sync() {
-            setLoading(true, "Transmitting Data to GitHub Cloud...");
-            try {
-                const response = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${REPO.token}`,
-                        "Accept": "application/vnd.github+json",
-                        "X-GitHub-Api-Version": "2022-11-28",
-                    },
-                    body: JSON.stringify({
-                        event_type: "update_db",
-                        client_payload: { data: JSON.stringify(db, null, 2) }
-                    })
-                });
-
-                if (response.status === 204) {
-                    // Critical delay to allow GitHub to update the raw file
-                    await new Promise(r => setTimeout(r, 4000));
-                    setLoading(false);
-                    return true;
-                } else {
-                    const error = await response.json();
-                    alert(`Sync Error: ${error.message}`);
-                }
-            } catch (e) { alert("Network Failure: Mainframe unreachable."); }
-            setLoading(false);
-            return false;
-        }
-
-        // 5. ADMIN TOOLS
         async function createModule() {
             const title = document.getElementById('c-title').value;
             if(!title) return;
             db.courses.unshift({ id: Date.now(), title, assignments: [] });
-            await sync();
-            location.reload();
+            if(await sync()) location.reload();
         }
 
         async function addAssignmentToModule() {
             const task = document.getElementById('new-assign-text').value;
             if(!task) return;
             const idx = db.courses.findIndex(c => c.id == activeMod.id);
-            if(!db.courses[idx].assignments) db.courses[idx].assignments = [];
             db.courses[idx].assignments.push({ task, id: Date.now() });
-            await sync();
-            renderModuleAssignments();
+            if(await sync()) renderModuleAssignments();
             document.getElementById('new-assign-text').value = '';
         }
 
         async function submitAssignment() {
             const content = document.getElementById('sub-content').value;
             const aIdx = document.getElementById('assign-selector').value;
-            if(!content || aIdx === "") return alert("Please include report content.");
-            
-            db.submissions.push({
-                studentEmail: currentUser.email,
-                studentName: currentUser.name,
-                moduleTitle: activeMod.title,
-                task: activeMod.assignments[aIdx].task,
-                content,
-                grade: 'PENDING',
-                id: Date.now()
-            });
-            await sync();
-            alert("Mission Report Transmitted.");
-            showGrid();
+            db.submissions.push({ studentEmail: currentUser.email, studentName: currentUser.name, moduleTitle: activeMod.title, task: activeMod.assignments[aIdx].task, content, grade: 'PENDING', id: Date.now() });
+            if(await sync()) { alert("Mission Transmitted"); showGrid(); }
         }
 
         function renderAdminExtras() {
-            document.getElementById('directory-list').innerHTML = db.users.map(u => `
-                <tr>
-                    <td class="py-6 font-black text-white text-xl">${u.name}</td>
-                    <td class="text-slate-400 font-medium">${u.email}</td>
-                    <td class="text-blue-500 font-mono text-right font-bold">${u.uid}</td>
-                </tr>
-            `).join('');
-            
-            document.getElementById('admin-gradebook').innerHTML = db.submissions.map(s => `
-                <div class="glass p-10 rounded-[3rem] border-white/5 space-y-6">
-                    <div class="flex justify-between items-center text-xs font-black uppercase tracking-[0.2em]">
-                        <span class="text-blue-400">${s.studentName}</span>
-                        <span class="text-orange-500">Status: ${s.grade}</span>
-                    </div>
-                    <p class="text-[11px] text-slate-500 font-bold uppercase italic">Task: ${s.task.substring(0, 60)}...</p>
-                    <p class="text-base bg-black/60 p-8 rounded-3xl border border-white/5 text-slate-300 italic leading-relaxed">"${s.content}"</p>
-                    <div class="flex gap-4 pt-4">
-                        <input id="gr-${s.id}" placeholder="Enter Grade" class="!p-4 !text-sm flex-1">
-                        <button onclick="saveGrade('${s.id}')" class="bg-green-600 px-10 rounded-2xl font-black text-xs uppercase hover:bg-green-500">Save</button>
-                    </div>
-                </div>
-            `).join('') || "<p class='text-slate-600 italic text-sm'>No incoming mission reports at this time.</p>";
+            document.getElementById('directory-list').innerHTML = db.users.map(u => `<tr><td class="py-6 font-black text-white text-xl">${u.name}</td><td class="text-slate-400">${u.email}</td><td class="text-blue-500 font-mono text-right font-bold">${u.uid}</td></tr>`).join('');
+            document.getElementById('admin-gradebook').innerHTML = db.submissions.map(s => `<div class="glass p-10 rounded-[3rem] border-white/5 space-y-6"><div class="flex justify-between items-center text-xs font-black uppercase"><span class="text-blue-400">${s.studentName}</span><span class="text-orange-500">${s.grade}</span></div><p class="text-base text-slate-300 italic">"${s.content}"</p><div class="flex gap-4"><input id="gr-${s.id}" placeholder="Grade" class="!p-4 !text-sm flex-1"><button onclick="saveGrade('${s.id}')" class="bg-green-600 px-10 rounded-2xl font-black text-xs uppercase">Save</button></div></div>`).join('');
         }
 
         async function saveGrade(id) {
             const g = document.getElementById(`gr-${id}`).value;
             db.submissions.find(s => s.id == id).grade = g;
-            await sync();
-            renderAdminExtras();
+            if(await sync()) renderAdminExtras();
         }
 
-        // 6. UTILS
-        function toggleAuth() {
-            const isLogin = document.getElementById('signup-fields').classList.contains('hidden');
-            document.getElementById('signup-fields').classList.toggle('hidden');
-            document.getElementById('login-fields').classList.toggle('hidden');
-            document.getElementById('auth-btn').innerText = isLogin ? 'Register Identity' : 'Initialize Entry';
-            document.getElementById('toggle-text').innerText = isLogin ? 'Return to Login' : 'Register New Identity';
-        }
-        function showGrid() { 
-            document.getElementById('module-details').classList.add('hidden'); 
-            document.getElementById('grid-view').classList.remove('hidden'); 
-            renderGrid();
-        }
+        function toggleAuth() { document.getElementById('signup-fields').classList.toggle('hidden'); document.getElementById('login-fields').classList.toggle('hidden'); }
+        function showGrid() { document.getElementById('module-details').classList.add('hidden'); document.getElementById('grid-view').classList.remove('hidden'); renderGrid(); }
         function logout() { localStorage.clear(); location.reload(); }
         function toggleElement(id) { document.getElementById(id).classList.toggle('hidden'); }
-        function setLoading(s, t) { 
-            const l = document.getElementById('loader');
-            document.getElementById('loader-text').innerText = t; 
-            if(s) { l.classList.remove('hidden'); l.style.opacity = '1'; }
-            else { l.style.opacity = '0'; setTimeout(() => l.classList.add('hidden'), 500); }
-        }
-        
+        function setLoading(s, t) { const l = document.getElementById('loader'); document.getElementById('loader-text').innerText = t; if(s) { l.classList.remove('hidden'); l.style.opacity = '1'; } else { l.style.opacity = '0'; setTimeout(() => l.classList.add('hidden'), 500); } }
         init();
     </script>
 </body>
