@@ -13,6 +13,13 @@
       "name": "Admin",
       "grade": "N/A",
       "role": "admin"
+    },
+    {
+      "name": "test one",
+      "email": "12.sanatansinha@gmail.com",
+      "password": "iamCOOL123!",
+      "role": "student",
+      "uid": "STU-4X8V79"
     }
   ]
 }
