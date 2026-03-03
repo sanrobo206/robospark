@@ -18,6 +18,13 @@
       "password": "iamCOOL123!",
       "uid": "RS-6008",
       "role": "student"
+    },
+    {
+      "name": "Shobhita Rai",
+      "email": "shobhita.rai@gmail.com",
+      "password": "iloveleo",
+      "uid": "RS-6774",
+      "role": "student"
     }
   ],
   "submissions": [
