@@ -12,9 +12,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Update Database File
         run: |
           echo '${{ github.event.client_payload.data }}' > data.json
+
       - name: Commit and Push Changes
         run: |
           git config --global user.name "RoboSpark-Bot"
