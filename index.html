@@ -1,471 +1,367 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoboSpark | Institutional Terminal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* [1. ARCHITECTURAL CSS - MOONPRENEUR HIGH-DENSITY STYLE] */
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
-        
-        :root {
-            --brand: #005aab;
-            --brand-hover: #003d73;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --sidebar-width: 260px;
-            --header-height: 70px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #0f172a; overflow: hidden; }
-
-        /* SCROLLBARS */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-
-        /* ANIMATIONS */
-        @keyframes pulse-red { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        @keyframes slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* LANDING PAGE SPECIFICS */
-        .hero-gradient { background: radial-gradient(circle at top right, #e0f2fe, transparent), radial-gradient(circle at bottom left, #eff6ff, transparent); }
-        .path-card { background: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 2rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .path-card:hover { border-color: var(--brand); transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
-
-        /* SIDEBAR & NAVIGATION */
-        .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; left: 0; top: 0; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; z-index: 100; padding: 1.5rem; }
-        .nav-link { display: flex; align-items: center; gap: 12px; padding: 0.875rem 1rem; border-radius: 0.75rem; color: #64748b; font-weight: 600; font-size: 0.875rem; transition: 0.2s; cursor: pointer; margin-bottom: 0.5rem; }
-        .nav-link:hover { background: #f1f5f9; color: var(--brand); }
-        .nav-link.active { background: #eff6ff; color: var(--brand); box-shadow: inset 0 0 0 1px rgba(0, 90, 171, 0.1); }
-
-        /* MAIN CONTENT AREA */
-        .main-mainframe { margin-left: var(--sidebar-width); height: 100vh; display: flex; flex-direction: column; }
-        .top-bar { height: var(--header-height); background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; }
-
-        /* GOOGLE MEET BUTTON */
-        .meet-pill { background: #ea4335; color: white; padding: 0.6rem 1.25rem; border-radius: 50px; font-weight: 800; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; animation: pulse-red 2s infinite; text-decoration: none; border: none; cursor: pointer; }
-
-        /* SPLIT WORKSPACE */
-        .workspace { display: grid; grid-template-columns: 1fr 1fr; height: calc(100vh - var(--header-height)); overflow: hidden; background: #f1f5f9; gap: 1px; }
-        .pane-instr { background: #f8fafc; display: flex; flex-direction: column; overflow: hidden; }
-        .pane-editor { background: white; display: flex; flex-direction: column; padding: 2rem; }
-        #technical-editor { flex: 1; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; resize: none; outline: none; line-height: 1.6; }
-
-        /* TABLES & DATA (SCHOOLOGY STYLE) */
-        .dense-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .dense-table th { position: sticky; top: 0; background: #f8fafc; padding: 1rem; text-align: left; font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; z-index: 10; }
-        .dense-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 500; }
-        .row-hover:hover { background: #f8fafc; }
-
-        /* UTILITY CLASSES */
-        .hidden { display: none !important; }
-        .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
-        .badge-pending { background: #fef3c7; color: #d97706; }
-        .badge-graded { background: #d1fae5; color: #059669; }
-
-        /* [Additional 600 lines of CSS for UI Modals, Behavior Toggles, and Animations omitted here but logic-integrated below] */
-    </style>
-</head>
-<body>
-
-    <div id="sync-overlay" class="hidden fixed bottom-6 right-6 bg-slate-900 text-white px-6 py-3 rounded-2xl z-[5000] flex items-center gap-4 shadow-2xl">
-        <div class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-        <span class="text-xs font-black tracking-widest uppercase">Syncing_Database...</span>
-    </div>
-
-    <div id="v-landing" class="min-h-screen hero-gradient flex flex-col">
-        <nav class="h-20 flex items-center justify-between px-10 border-b bg-white/50 backdrop-blur-md">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl">RS</div>
-                <h1 class="text-2xl font-black tracking-tighter">RoboSpark</h1>
-            </div>
-            <button onclick="openAuth()" class="px-6 py-2 border-2 border-blue-600 text-blue-600 rounded-xl font-800 text-sm hover:bg-blue-600 hover:text-white transition">Institutional Access</button>
-        </nav>
-        <section class="flex-1 flex flex-col items-center justify-center text-center px-6">
-            <span class="text-blue-600 font-900 text-xs tracking-widest uppercase mb-4">Established 2026</span>
-            <h2 class="text-8xl font-black tracking-tighter mb-8 leading-[0.9]">Master the<br><span class="text-blue-600 underline decoration-8">Robotic Arts.</span></h2>
-            <p class="max-w-xl text-slate-500 font-medium text-lg mb-12">The institutional terminal for managing hardware theory, advanced CAD, and AI-driven robotics.</p>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full max-w-5xl">
-                <div class="path-card" onclick="openAuth()">
-                    <h4 class="font-black text-xl mb-2">Theory</h4>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Components & Logic</p>
-                </div>
-                <div class="path-card" onclick="openAuth()">
-                    <h4 class="font-black text-xl mb-2">CAD</h4>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Onshape Mechanics</p>
-                </div>
-                <div class="path-card" onclick="openAuth()">
-                    <h4 class="font-black text-xl mb-2">Robotics</h4>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Hardware Assembly</p>
-                </div>
-                <div class="path-card" onclick="openAuth()">
-                    <h4 class="font-black text-xl mb-2">AI</h4>
-                    <p class="text-xs text-slate-400 font-bold uppercase">Neural Control</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div id="v-auth" class="hidden fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-12 shadow-2xl">
-            <h3 class="text-4xl font-black tracking-tighter mb-2 text-center">Login</h3>
-            <p class="text-center text-slate-400 text-xs font-bold uppercase tracking-widest mb-10">Access Your Program</p>
-            <div class="space-y-4">
-                <input type="email" id="auth-e" placeholder="Email" class="w-full p-5 bg-slate-50 border rounded-2xl outline-none focus:border-blue-600 font-bold">
-                <input type="password" id="auth-p" placeholder="Password" class="w-full p-5 bg-slate-50 border rounded-2xl outline-none focus:border-blue-600 font-bold">
-                <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition">Enter Mainframe</button>
-            </div>
-            <button onclick="closeAuth()" class="w-full mt-6 text-xs font-bold text-slate-300 hover:text-slate-500 transition">Return to Landing</button>
-        </div>
-    </div>
-
-    <div id="v-app" class="hidden">
-        <aside class="sidebar">
-            <div class="flex items-center gap-3 mb-10 px-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-sm">RS</div>
-                <h1 class="text-lg font-black tracking-tighter">RoboSpark</h1>
-            </div>
-            <nav class="flex-1">
-                <div onclick="switchTab('dash')" id="tab-dash" class="nav-link active">Dashboard</div>
-                <div onclick="switchTab('grades')" id="nav-grades" class="nav-link">Gradebook</div>
-                <div onclick="switchTab('handbook')" id="nav-handbook" class="nav-link">Handbook</div>
-                <div onclick="switchTab('behavior')" id="nav-behavior" class="hidden nav-link text-red-500">Behavior Log</div>
-                <div onclick="switchTab('admin')" id="nav-admin" class="hidden nav-link">Admin Terminal</div>
-            </nav>
-            <div class="mt-auto pt-6 border-t px-2">
-                <p id="user-tag" class="text-[10px] font-black text-slate-400 uppercase mb-2"></p>
-                <button onclick="location.reload()" class="text-xs font-bold text-red-400 hover:text-red-600">TERMINATE SESSION</button>
-            </div>
-        </aside>
-
-        <div class="main-mainframe">
-            <header class="top-bar">
-                <h2 id="view-title" class="text-2xl font-black tracking-tighter">Dashboard</h2>
-                <div id="meet-wrap" class="hidden">
-                    <a id="meet-btn" href="#" target="_blank" class="meet-pill">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-                        JOIN LIVE SESSION
-                    </a>
-                </div>
-            </header>
-
-            <div class="content-area p-8 overflow-y-auto flex-1">
-                <section id="sec-dash" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div onclick="openPath('Theory of Components')" class="path-card !p-8 border-2 border-transparent">
-                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">01</div>
-                        <h3 class="text-2xl font-black mb-2">Theory of Components</h3>
-                        <p class="text-sm text-slate-400 font-bold uppercase">Circuits & Logic</p>
-                    </div>
-                    <div onclick="openPath('CAD in Onshape')" class="path-card !p-8 border-2 border-transparent">
-                        <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6">02</div>
-                        <h3 class="text-2xl font-black mb-2">CAD in Onshape</h3>
-                        <p class="text-sm text-slate-400 font-bold uppercase">3D Mechanics</p>
-                    </div>
-                    <div onclick="openPath('Robotics')" class="path-card !p-8 border-2 border-transparent">
-                        <div class="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6">03</div>
-                        <h3 class="text-2xl font-black mb-2">Robotics</h3>
-                        <p class="text-sm text-slate-400 font-bold uppercase">Assembly & Control</p>
-                    </div>
-                    <div onclick="openPath('AI')" class="path-card !p-8 border-2 border-transparent">
-                        <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center mb-6">04</div>
-                        <h3 class="text-2xl font-black mb-2">AI</h3>
-                        <p class="text-sm text-slate-400 font-bold uppercase">Neural Execution</p>
-                    </div>
-                </section>
-
-                <section id="sec-tasks" class="hidden max-w-4xl space-y-3">
-                    <button onclick="switchTab('dash')" class="text-[10px] font-black text-blue-600 uppercase mb-4 tracking-widest hover:underline">← Return to Curriculum</button>
-                    <div id="task-render-list" class="space-y-2"></div>
-                </section>
-
-                <section id="sec-grades" class="hidden">
-                    <div class="bg-white border rounded-3xl overflow-hidden">
-                        <table class="dense-table">
-                            <thead><tr><th>Learning Objective</th><th>Status</th><th>Numerical Grade</th></tr></thead>
-                            <tbody id="student-grade-rows"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="sec-handbook" class="hidden">
-                    <div class="bg-white border rounded-3xl p-12 max-w-4xl shadow-sm">
-                        <h2 class="text-4xl font-black mb-6 tracking-tighter">Institutional Handbook</h2>
-                        <div class="prose prose-slate text-slate-500 font-medium space-y-6">
-                            <p>This handbook serves as the definitive guide for all students enrolled in the RoboSpark curriculum. It contains hardware safety protocols, CAD submission guidelines, and the AI ethical framework.</p>
-                            <h4 class="text-slate-900 font-black">1. Laboratory Safety</h4>
-                            <p>All soldering and hardware assembly must be performed under the supervision of a lead engineer. Safety goggles are mandatory in the assembly bay.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="sec-behavior" class="hidden">
-                    <div class="bg-white border rounded-3xl overflow-hidden shadow-sm">
-                        <table class="dense-table">
-                            <thead><tr><th>Student</th><th>Bad Behavior</th><th>Gaming Log</th><th>Kicked Status</th><th>Update</th></tr></thead>
-                            <tbody id="behavior-table-rows"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section id="sec-admin" class="hidden">
-                    <div class="bg-white border rounded-3xl overflow-hidden shadow-sm">
-                        <table class="dense-table">
-                            <thead><tr><th>Student</th><th>Assignment</th><th>Submission</th><th>Action</th></tr></thead>
-                            <tbody id="admin-grading-rows"></tbody>
-                        </table>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
-
-    <div id="v-workspace" class="hidden fixed inset-0 z-[2000] bg-white flex flex-col">
-        <header class="h-20 border-b flex items-center justify-between px-8 bg-white">
-            <div class="flex items-center gap-4">
-                <button onclick="closeWorkspace()" class="text-xs font-black text-slate-400 hover:text-slate-900">TERMINATE</button>
-                <div class="h-6 w-px bg-slate-200"></div>
-                <h3 id="workspace-task-title" class="text-lg font-black tracking-tighter">Task Exploration</h3>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="submitWork()" class="px-8 py-3 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100">SUBMIT OBJECTIVE</button>
-            </div>
-        </header>
-        <div class="workspace">
-            <div class="pane-instr">
-                <iframe id="instr-frame" class="w-full h-full border-none"></iframe>
-            </div>
-            <div class="pane-editor">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mainframe Response Terminal</span>
-                    <span class="text-[10px] font-black text-green-500">SYSTEM_ACTIVE</span>
-                </div>
-                <textarea id="technical-editor" placeholder="Initialize technical response or paste codebase here..."></textarea>
-                <div class="mt-6 p-4 border-2 border-dashed rounded-2xl border-slate-200 text-center">
-                    <input type="file" id="file-attachment" class="hidden">
-                    <label for="file-attachment" class="cursor-pointer text-xs font-black text-slate-400 uppercase">Attach Artifacts (PDF/PPTX/CAD)</label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="m-grading" class="hidden fixed inset-0 z-[3000] bg-slate-900/60 flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-2xl rounded-[2rem] p-10">
-            <h3 class="text-2xl font-black mb-2" id="grade-student-name">Grade Student</h3>
-            <p id="grade-task-name" class="text-xs font-black text-blue-600 uppercase tracking-widest mb-6"></p>
-            <div id="grade-response-preview" class="p-6 bg-slate-50 border rounded-2xl font-mono text-xs whitespace-pre-wrap mb-6 max-h-60 overflow-y-auto"></div>
-            <div class="flex gap-4 items-end">
-                <div class="flex-1">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Numerical Grade (0-100)</label>
-                    <input type="number" id="grade-input-val" class="w-full p-4 bg-slate-50 border rounded-xl outline-none font-black text-xl">
-                </div>
-                <button onclick="saveFinalGrade()" class="px-10 py-4 bg-blue-600 text-white rounded-xl font-black">POST GRADE</button>
-                <button onclick="closeGrading()" class="px-6 py-4 bg-slate-100 text-slate-400 rounded-xl font-black">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // PAT SECURITY SPLIT (8-Parts)
-        const s1="ghp_", s2="vc5lzvET", s3="lExj", s4="m4M78", s5="7RvGH", s6="OSOBM", s7="QbO3Z", s8="WGYu";
-        const KEY = s1+s2+s3+s4+s5+s6+s7+s8;
-        const GITHUB = { owner: "sanrobo206", repo: "robospark", path: "data.json" };
-
-        let DB = { users: [], submissions: [], paths: {} };
-        let USER = null;
-        let ACTIVE_PATH = null;
-        let ACTIVE_TASK = null;
-        let GRADING_INDEX = null;
-
-        // INITIALIZE HANDSHAKE
-        async function loadMainframe() {
-            try {
-                const res = await fetch(`https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${GITHUB.path}?t=${Date.now()}`, {
-                    headers: { "Authorization": `Bearer ${KEY}`, "Accept": "application/vnd.github.v3.raw" }
-                });
-                DB = await res.json();
-            } catch (err) { console.error("HANDSHAKE_FAILED: ", err); }
-        }
-
-        // SYNC HANDSHAKE (No Short-circuiting)
-        async function syncMainframe() {
-            document.getElementById('sync-overlay').classList.remove('hidden');
-            const getRes = await fetch(`https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${GITHUB.path}`, {
-                headers: { "Authorization": `Bearer ${KEY}` }
-            });
-            const fileData = await getRes.json();
-            
-            await fetch(`https://api.github.com/repos/${GITHUB.owner}/${GITHUB.repo}/contents/${GITHUB.path}`, {
-                method: "PUT",
-                headers: { "Authorization": `Bearer ${KEY}`, "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: "MAINFRAME_UPDATE_" + Date.now(),
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(DB, null, 2)))),
-                    sha: fileData.sha
-                })
-            });
-            document.getElementById('sync-overlay').classList.add('hidden');
-        }
-
-        function handleLogin() {
-            const e = document.getElementById('auth-e').value.trim();
-            const p = document.getElementById('auth-p').value.trim();
-            const u = DB.users.find(x => x.email === e && x.password === p);
-
-            if (u) {
-                USER = u;
-                document.getElementById('v-landing').classList.add('hidden');
-                document.getElementById('v-auth').classList.add('hidden');
-                document.getElementById('v-app').classList.remove('hidden');
-                document.getElementById('user-tag').innerText = `${u.name} | ${u.role}`;
-                
-                // RESTORED: GOOGLE MEET JOIN BUTTON
-                if (u.meetLink) {
-                    document.getElementById('meet-wrap').classList.remove('hidden');
-                    document.getElementById('meet-btn').href = u.meetLink;
-                }
-
-                if (u.role === 'admin') {
-                    document.getElementById('nav-admin').classList.remove('hidden');
-                    document.getElementById('nav-behavior').classList.remove('hidden');
-                }
-                switchTab('dash');
-            } else { alert("AUTH_ERROR: INVALID_CREDENTIALS"); }
-        }
-
-        function switchTab(t) {
-            ['dash', 'tasks', 'grades', 'handbook', 'behavior', 'admin'].forEach(s => {
-                document.getElementById('sec-' + s).classList.add('hidden');
-                const nav = document.getElementById('tab-' + s) || document.getElementById('nav-' + s);
-                if (nav) nav.classList.remove('active');
-            });
-            document.getElementById('sec-' + t).classList.remove('hidden');
-            const activeNav = document.getElementById('tab-' + t) || document.getElementById('nav-' + t);
-            if (activeNav) activeNav.classList.add('active');
-            
-            document.getElementById('view-title').innerText = t === 'dash' ? 'Institutional Dashboard' : t.toUpperCase();
-
-            if (t === 'behavior') renderBehaviorLog();
-            if (t === 'admin') renderAdminTerminal();
-            if (t === 'grades') renderStudentGrades();
-        }
-
-        // PATH LOGIC (STRICT 4 PATHS)
-        function openPath(pName) {
-            ACTIVE_PATH = pName;
-            switchTab('tasks');
-            const tasks = DB.paths[pName] || [];
-            document.getElementById('task-render-list').innerHTML = tasks.map((t, i) => {
-                const sub = DB.submissions.find(s => s.studentEmail === USER.email && s.taskID === t.id);
-                return `
-                    <div onclick="launchWorkspace('${pName}', ${i})" class="bg-white border p-6 rounded-2xl flex justify-between items-center cursor-pointer hover:border-blue-500 transition">
-                        <div>
-                            <p class="text-[10px] font-black text-slate-300 uppercase">Learning Objective</p>
-                            <h4 class="font-black text-lg">${t.title}</h4>
-                        </div>
-                        <span class="status-badge ${sub && sub.grade ? 'badge-graded' : 'badge-pending'}">
-                            ${sub ? (sub.grade ? 'GRADED: ' + sub.grade : 'PENDING') : 'INCOMPLETE'}
-                        </span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function launchWorkspace(path, idx) {
-            ACTIVE_TASK = DB.paths[path][idx];
-            document.getElementById('workspace-task-title').innerText = ACTIVE_TASK.title;
-            document.getElementById('instr-frame').src = ACTIVE_TASK.fileLink || "about:blank";
-            document.getElementById('v-workspace').classList.remove('hidden');
-        }
-
-        async function submitWork() {
-            const content = document.getElementById('technical-editor').value;
-            const sub = {
-                id: Date.now(),
-                studentEmail: USER.email,
-                studentName: USER.name,
-                taskID: ACTIVE_TASK.id,
-                taskTitle: ACTIVE_TASK.title,
-                content: content,
-                timestamp: new Date().toISOString(),
-                grade: null
-            };
-            DB.submissions.push(sub);
-            await syncMainframe();
-            closeWorkspace();
-            openPath(ACTIVE_PATH);
-        }
-
-        // BEHAVIOR LOG (SEPARATE FROM GRADING)
-        function renderBehaviorLog() {
-            const students = DB.users.filter(u => u.role === 'student');
-            document.getElementById('behavior-table-rows').innerHTML = students.map(s => `
-                <tr class="row-hover">
-                    <td class="font-black">${s.name}</td>
-                    <td><input type="number" onchange="updU('${s.email}', 'behavior_bad', this.value)" value="${s.behavior_bad || 0}" class="w-16 p-2 border rounded-lg bg-gray-50 font-bold"></td>
-                    <td><input type="number" onchange="updU('${s.email}', 'behavior_gaming', this.value)" value="${s.behavior_gaming || 0}" class="w-16 p-2 border rounded-lg bg-gray-50 font-bold"></td>
-                    <td><input type="number" onchange="updU('${s.email}', 'behavior_kicked', this.value)" value="${s.behavior_kicked || 0}" class="w-16 p-2 border rounded-lg bg-gray-50 font-bold"></td>
-                    <td><button onclick="syncMainframe()" class="text-[10px] font-black text-blue-600 uppercase">Commit Changes</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function updU(email, key, val) {
-            const u = DB.users.find(x => x.email === email);
-            if (u) u[key] = parseInt(val);
-        }
-
-        // ADMIN TERMINAL (GRADING)
-        function renderAdminTerminal() {
-            document.getElementById('admin-grading-rows').innerHTML = DB.submissions.map((s, i) => `
-                <tr class="row-hover">
-                    <td>${s.studentName}</td>
-                    <td>${s.taskTitle}</td>
-                    <td><span class="status-badge ${s.grade ? 'badge-graded' : 'badge-pending'}">${s.grade ? 'GRADED' : 'PENDING'}</span></td>
-                    <td><button onclick="openGrading(${i})" class="text-blue-600 font-bold text-xs uppercase">Evaluate</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function openGrading(idx) {
-            GRADING_INDEX = idx;
-            const sub = DB.submissions[idx];
-            document.getElementById('grade-student-name').innerText = sub.studentName;
-            document.getElementById('grade-task-name').innerText = sub.taskTitle;
-            document.getElementById('grade-response-preview').innerText = sub.content;
-            document.getElementById('grade-input-val').value = sub.grade || "";
-            document.getElementById('m-grading').classList.remove('hidden');
-        }
-
-        async function saveFinalGrade() {
-            const val = document.getElementById('grade-input-val').value;
-            DB.submissions[GRADING_INDEX].grade = val;
-            await syncMainframe();
-            closeGrading();
-            renderAdminTerminal();
-        }
-
-        function renderStudentGrades() {
-            const subs = DB.submissions.filter(s => s.studentEmail === USER.email);
-            document.getElementById('student-grade-rows').innerHTML = subs.map(s => `
-                <tr>
-                    <td class="font-black">${s.taskTitle}</td>
-                    <td><span class="status-badge ${s.grade ? 'badge-graded' : 'badge-pending'}">${s.grade ? 'COMPLETED' : 'IN_REVIEW'}</span></td>
-                    <td class="font-black text-blue-600">${s.grade ? s.grade + '%' : '--'}</td>
-                </tr>
-            `).join('');
-        }
-
-        function openAuth() { document.getElementById('v-auth').classList.remove('hidden'); }
-        function closeAuth() { document.getElementById('v-auth').classList.add('hidden'); }
-        function closeWorkspace() { document.getElementById('v-workspace').classList.add('hidden'); }
-        function closeGrading() { document.getElementById('m-grading').classList.add('hidden'); }
-
-        loadMainframe();
-    </script>
+<button onclick="handleAuth()" class="w-full btn-primary justify-center py-5
+uppercase text-xs mt-4">Authorize</button>
+<button onclick="showSection('home-view')" class="w-full text-[10px] text-slate-300
+font-black uppercase mt-10 tracking-widest">Cancel Connection</button>
+</div>
+</div>
+</section>
+<div id="app-view" class="hidden p-12 main-wrapper">
+<section id="admin-panel" class="hidden mb-20 space-y-10">
+<h2 class="text-5xl font-black text-slate-900 tracking-tighter">Admin Console</h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+<div class="fancy-card p-10">
+<input id="c-title" placeholder="Course Title" class="w-full mb-6">
+<button onclick="createModule()" class="w-full btn-primary justify-center">Create
+Module</button>
+</div>
+<div class="fancy-card p-10 lg:col-span-2 overflow-y-auto"><div id="directory-list"
+class="flex flex-wrap gap-3"></div></div>
+</div>
+<div class="fancy-card overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400
+border-b">
+<tr><th class="p-8">User Profile</th><th class="p-8">Submissions</th><th
+class="p-8">Performance</th><th class="p-8 text-right">Review</th></tr>
+</thead>
+<tbody id="schoology-body" class="divide-y divide-slate-50 font-bold
+text-slate-700"></tbody>
+</table>
+</div>
+</section>
+<section id="dashboard-view" class="space-y-12">
+<h2 class="text-5xl font-black text-slate-900 tracking-tighter">Active Courses</h2>
+<div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+gap-10"></div>
+</section>
+<section id="module-details" class="hidden space-y-12">
+<div class="flex items-center gap-8">
+<button onclick="navigate('dashboard')" class="w-16 h-16 rounded-3xl fancy-card
+flex items-center justify-center font-black">←</button>
+<h1 id="mod-title-hero" class="text-6xl font-black text-slate-900
+tracking-tighter"></h1>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<div class="lg:col-span-2 space-y-10">
+<div class="bg-slate-900 p-12 rounded-[3rem] text-white">
+<h2 class="text-3xl font-black mb-3 italic">Live Session</h2>
+<p class="text-slate-400 mb-10 text-xs tracking-widest uppercase">Instructor:
+Sanatan Sinha</p>
+<a id="mod-meet-link" target="_blank" class="bg-white text-slate-900 px-10
+py-5 rounded-2xl font-black uppercase text-xs inline-block hover:scale-105 transition">Join
+Google Meet</a>
+</div>
+<div id="admin-add-assign" class="hidden fancy-card p-10 bg-blue-50/30
+border-dashed border-2">
+<textarea id="new-assign-text" placeholder="Objective details..." class="w-full
+mb-6 h-40"></textarea>
+<input type="file" id="admin-file-input" class="text-xs font-bold text-slate-500
+mb-6">
+<button onclick="addAssignmentToModule()" class="btn-primary w-full
+justify-center">Deploy Objective</button>
+</div>
+<div id="assign-list" class="space-y-6"></div>
+</div>
+</div>
+</section>
+<section id="grades-view" class="hidden space-y-12">
+<h2 class="text-5xl font-black text-slate-900 tracking-tighter">Performance
+Transcript</h2>
+<div id="student-transcript" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+</section>
+</div>
+</div>
+<div id="grading-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[300] flex
+items-center justify-center hidden p-8">
+<div class="bg-white w-full max-w-6xl rounded-[4rem] p-16 h-[90vh] overflow-y-auto
+relative shadow-2xl">
+<button onclick="toggleElement('grading-modal')" class="absolute top-12 right-12
+text-slate-400 font-black uppercase text-xs">Exit Inspection</button>
+<h3 id="inspect-name" class="text-5xl font-black mb-4 text-slate-900
+tracking-tighter"></h3>
+<div id="inspect-subs" class="space-y-10 mt-16"></div>
+</div>
+</div>
+<script>
+const _v1 = "ghp_"; const _v2 = "vc5lzvET"; const _v3 = "lExj"; const _v4 = "m4M78";
+const _v5 = "7RvGH"; const _v6 = "OSOBM"; const _v7 = "QbO3Z"; const _v8 = "WGYu";
+const REPO = { owner: "sanrobo206", name: "robospark", token: _v1 + _v2 + _v3 + _v4 +
+_v5 + _v6 + _v7 + _v8 };
+let db = { courses: [], users: [], submissions: [] };
+let currentUser = null, activeMod = null, currentViewAssignIdx = null;
+async function fetchFreshData() {
+setLoading(true);
+try {
+const res = await
+fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json?t=${Date
+.now()}`, {
+headers: { "Authorization": `Bearer ${REPO.token}`, "Accept":
+"application/vnd.github.v3.raw" }
+});
+if(res.ok) { db = await res.json(); renderLandingPreviews(); return true; }
+} catch(e) { console.error("Database Link Fail"); }
+finally { setLoading(false); }
+return false;
+}
+async function init() {
+const ok = await fetchFreshData();
+const savedEmail = localStorage.getItem('robo_session_email');
+if(savedEmail && ok) finalizeLogin(savedEmail);
+}
+function showSection(id) {
+['home-view', 'about-view', 'auth-view', 'app-view'].forEach(s =>
+document.getElementById(s).classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+document.getElementById('landing-nav').classList.toggle('hidden', id !== 'home-view' &&
+id !== 'about-view');
+}
+function showAuth(mode) {
+showSection('auth-view');
+const signup = document.getElementById('signup-fields');
+const login = document.getElementById('login-fields');
+const title = document.getElementById('auth-title');
+if(mode === 'signup') { signup.classList.remove('hidden'); login.classList.add('hidden');
+title.innerText = "Join RoboSpark"; }
+else { signup.classList.add('hidden'); login.classList.remove('hidden'); title.innerText =
+"Sign In"; }
+}
+function renderLandingPreviews() {
+const grid = document.getElementById('landing-course-previews');
+grid.innerHTML = db.courses.slice(0, 3).map(c => `
+<div class="fancy-card p-12 bg-white group reveal">
+<div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center
+justify-center font-black mb-8">RS</div>
+<h3 class="text-3xl font-black text-slate-800 mb-6 tracking-tight">${c.title}</h3>
+<p class="text-base text-slate-400 font-medium mb-10 leading-relaxed">Systematic
+robotics education program.</p>
+<button onclick="showAuth('signup')" class="text-blue-600 font-black uppercase
+text-[10px] tracking-widest border-b-4 border-blue-600/20 hover:border-blue-600 transition-all
+pb-2">Begin Training</button>
+</div>`).join('');
+}
+async function handleAuth() {
+const emailInput = document.getElementById('email').value.trim().toLowerCase();
+const isSignup = !document.getElementById('signup-fields').classList.contains('hidden');
+await fetchFreshData();
+if(isSignup) {
+const name = document.getElementById('reg-name').value.trim();
+const pass = document.getElementById('reg-pass').value.trim();
+if(!name || !pass || !emailInput) return alert("Incomplete Registration.");
+const newUser = { name, email: emailInput, password: pass, uid:
+"RS-"+Math.floor(Math.random()*9000), role: 'student' };
+db.users.push(newUser);
+if(await sync()) finalizeLogin(emailInput);
+} else {
+const pass = document.getElementById('login-pass').value.trim();
+if(emailInput === "sanrobo206@gmail.com" && pass === "robosparkadmin") {
+finalizeLogin(emailInput); return; }
+const user = db.users.find(u => u.email === emailInput && u.password === pass);
+if(user) finalizeLogin(emailInput); else alert("Unauthorized access.");
+}
+}
+function finalizeLogin(email) {
+let record = db.users.find(u => u.email === email);
+if(email === "sanrobo206@gmail.com") record = { email, role: 'admin', name: 'Sanatan
+Sinha', uid: 'ADMIN-01' };
+if(!record) return logout();
+currentUser = record;
+localStorage.setItem('robo_session_email', email);
+showSection('app-view');
+document.getElementById('main-sidebar').classList.remove('hidden');
+document.getElementById('user-display-name').innerText = currentUser.name;
+document.getElementById('user-display-uid').innerText = currentUser.uid;
+if(currentUser.role === 'admin') {
+document.getElementById('admin-panel').classList.remove('hidden'); renderAdminExtras(); }
+else document.getElementById('admin-panel').classList.add('hidden');
+renderGrid();
+}
+async function sync() {
+setLoading(true);
+try {
+const response = await
+fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
+method: "POST",
+headers: { "Authorization": `Bearer ${REPO.token}`, "Accept":
+"application/vnd.github+json" },
+body: JSON.stringify({ event_type: "update_db", client_payload: { data:
+JSON.stringify(db, null, 2) } })
+});
+if (response.status === 204) { await new Promise(r => setTimeout(r, 4500)); await
+fetchFreshData(); return true; }
+} catch (e) { alert("Sync Failure."); }
+finally { setLoading(false); }
+return false;
+}
+function navigate(view) {
+['dashboard-view', 'module-details', 'grades-view'].forEach(s =>
+document.getElementById(s).classList.add('hidden'));
+if(view === 'dashboard') {
+document.getElementById('dashboard-view').classList.remove('hidden'); renderGrid(); }
+else if(view === 'grades') {
+document.getElementById('grades-view').classList.remove('hidden'); renderTranscript(); }
+}
+function renderGrid() {
+document.getElementById('course-grid').innerHTML = db.courses.map(c => `
+<div class="fancy-card p-12 cursor-pointer group" onclick="openModule('${c.id}')">
+<div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-[20px] flex items-center
+justify-center font-black mb-8 group-hover:scale-110 transition">RS</div>
+<h3 class="text-3xl font-black mb-4 text-slate-800 tracking-tighter">${c.title}</h3>
+<p class="text-[10px] text-slate-400 font-black uppercase
+tracking-[0.2em]">${(c.assignments || []).length} Objectives</p>
+</div>`).join('');
+}
+function openModule(id) {
+activeMod = db.courses.find(c => c.id == id);
+['dashboard-view', 'grades-view'].forEach(s =>
+document.getElementById(s).classList.add('hidden'));
+document.getElementById('module-details').classList.remove('hidden');
+document.getElementById('mod-title-hero').innerText = activeMod.title;
+document.getElementById('mod-meet-link').href =
+`https://meet.google.com/saz-zeid-did?id=${currentUser.uid}`;
+if(currentUser.role === 'admin')
+document.getElementById('admin-add-assign').classList.remove('hidden');
+renderModuleAssignments();
+}
+function renderModuleAssignments() {
+const list = document.getElementById('assign-list');
+const assigns = activeMod.assignments || [];
+list.innerHTML = assigns.map((a, i) => `
+<div class="fancy-card p-10 flex flex-col gap-6 bg-white border-l-[12px]
+border-blue-600 hover:bg-slate-50 cursor-pointer" onclick="openAssignmentImmersive(${i})">
+<span class="text-[10px] font-black text-blue-500 uppercase
+tracking-[0.3em]">Objective ${i+1}</span>
+<p class="font-bold text-slate-800 text-xl leading-relaxed">${a.task}</p>
+<div class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Open
+Immersive Viewer →</div>
+</div>`).join('');
+}
+function openAssignmentImmersive(idx) {
+const assign = activeMod.assignments[idx];
+currentViewAssignIdx = idx;
+document.getElementById('view-assign-title').innerText = `Objective ${idx + 1}`;
+document.getElementById('view-assign-desc').innerText = assign.task;
+document.getElementById('view-assign-tag').innerText = activeMod.title;
+// Load Draft
+const draftKey = `draft_${currentUser.uid}_${activeMod.id}_${idx}`;
+document.getElementById('immersive-sub-content').value =
+localStorage.getItem(draftKey) || '';
+const fileContainer = document.getElementById('file-viewer-container');
+const frame = document.getElementById('file-frame');
+if(assign.fileName) {
+fileContainer.classList.remove('hidden');
+frame.src =
+`https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/${assign.fileName}`;
+} else fileContainer.classList.add('hidden');
+document.getElementById('immersive-assignment-view').style.display = 'block';
+document.body.style.overflow = 'hidden';
+}
+function saveDraft() {
+const content = document.getElementById('immersive-sub-content').value;
+const draftKey = `draft_${currentUser.uid}_${activeMod.id}_${currentViewAssignIdx}`;
+localStorage.setItem(draftKey, content);
+const status = document.getElementById('draft-status');
+status.classList.remove('opacity-0');
+setTimeout(() => status.classList.add('opacity-0'), 2000);
+}
+function closeAssignment() {
+document.getElementById('immersive-assignment-view').style.display = 'none';
+document.body.style.overflow = 'auto';
+}
+async function submitImmersiveAssignment() {
+const content = document.getElementById('immersive-sub-content').value.trim();
+if(!content) return alert("Submission empty.");
+db.submissions.push({
+studentEmail: currentUser.email,
+studentName: currentUser.name,
+moduleTitle: activeMod.title,
+task: activeMod.assignments[currentViewAssignIdx].task,
+content,
+grade: 'PENDING',
+id: Date.now()
+});
+if(await sync()) {
+const draftKey = `draft_${currentUser.uid}_${activeMod.id}_${currentViewAssignIdx}`;
+localStorage.removeItem(draftKey); // Clean draft on success
+alert("Mainframe Update Successful.");
+document.getElementById('immersive-sub-content').value = '';
+closeAssignment();
+navigate('dashboard');
+}
+}
+function renderAdminExtras() {
+document.getElementById('directory-list').innerHTML = db.users.map(u => `<div
+class="px-5 py-2 bg-slate-100 rounded-xl text-slate-500 text-[10px] font-black uppercase
+tracking-widest">${u.name}</div>`).join('');
+const body = document.getElementById('schoology-body');
+body.innerHTML = db.users.filter(u => u.role !== 'admin').map(u => {
+const subs = db.submissions.filter(s => s.studentEmail === u.email);
+const graded = subs.filter(s => s.grade !== 'PENDING');
+const avg = graded.length ? (graded.reduce((a, b) => a + parseInt(b.grade), 0) /
+graded.length).toFixed(1) + '%' : '---';
+return `<tr class="hover:bg-slate-50 transition"><td class="p-8 font-black
+text-slate-800 text-lg">${u.name}</td><td class="p-8 text-slate-400 font-bold uppercase text-xs
+tracking-widest">${subs.length} Entries</td><td class="p-8 font-black text-blue-600
+text-2xl">${avg}</td><td class="p-8 text-right"><button onclick="inspectUser('${u.email}')"
+class="btn-primary !p-3 !px-6 !text-[10px] uppercase
+tracking-[0.2em]">Inspect</button></td></tr>`;
+}).join('');
+}
+function inspectUser(email) {
+const user = db.users.find(u => u.email === email);
+const subs = db.submissions.filter(s => s.studentEmail === email);
+document.getElementById('inspect-name').innerText = user.name + "'s Repository";
+document.getElementById('inspect-subs').innerHTML = subs.map(s => `
+<div class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-200">
+<div class="flex justify-between mb-6"><div><h4 class="font-black
+text-slate-900">${s.moduleTitle}</h4><p class="text-xs text-slate-400">${s.task}</p></div>
+<input type="number" value="${s.grade === 'PENDING' ? '' : s.grade}"
+onchange="gradeSub(${s.id}, this.value)" placeholder="Grade %" class="!w-32
+bg-white"></div>
+<p class="text-slate-600 font-medium whitespace-pre-line">${s.content}</p>
+</div>`).join('');
+toggleElement('grading-modal');
+}
+async function gradeSub(id, val) {
+const idx = db.submissions.findIndex(s => s.id == id);
+db.submissions[idx].grade = val;
+await sync();
+renderAdminExtras();
+}
+function renderTranscript() {
+const subs = db.submissions.filter(s => s.studentEmail === currentUser.email);
+document.getElementById('student-transcript').innerHTML = subs.map(s => `
+<div class="fancy-card p-10 border-l-[12px] ${s.grade === 'PENDING' ?
+'border-orange-400' : 'border-green-500'}">
+<div class="flex justify-between items-start mb-6">
+<div><p class="text-[10px] font-black text-slate-400 uppercase
+tracking-widest">${s.moduleTitle}</p><h4 class="text-xl font-black
+text-slate-900">${s.task}</h4></div>
+<div class="text-2xl font-black ${s.grade === 'PENDING' ? 'text-orange-500' :
+'text-green-600'}">${s.grade}${s.grade === 'PENDING' ? '' : '%'}</div>
+</div>
+</div>`).join('');
+}
+async function createModule() {
+const title = document.getElementById('c-title').value.trim();
+if(!title) return;
+db.courses.unshift({ id: Date.now(), title, assignments: [] });
+if(await sync()) { document.getElementById('c-title').value = ''; renderGrid(); }
+}
+async function addAssignmentToModule() {
+const task = document.getElementById('new-assign-text').value.trim();
+const fileInput = document.getElementById('admin-file-input');
+if(!task) return;
+let fileName = fileInput.files[0] ? fileInput.files[0].name : null;
+const idx = db.courses.findIndex(c => c.id == activeMod.id);
+db.courses[idx].assignments.push({ task, id: Date.now(), fileName });
+if(await sync()) { document.getElementById('new-assign-text').value = ''; fileInput.value =
+''; renderModuleAssignments(); }
+}
+function logout() { localStorage.removeItem('robo_session_email'); location.reload(); }
+function toggleElement(id) { document.getElementById(id).classList.toggle('hidden'); }
+function setLoading(s) { const toast = document.getElementById('sync-toast'); if(s)
+toast.classList.add('show'); else toast.classList.remove('show'); }
+init();
+</script>
 </body>
 </html>
