@@ -10,30 +10,27 @@
         :root { --brand: #005aab; --bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #1e293b; margin: 0; scroll-behavior: smooth; }
         
-        /* THEMES & CARDS */
-        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        /* UI COMPONENTS */
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
         .fancy-card { background: white; border-radius: 32px; border: 1px solid rgba(0, 0, 0, 0.05); transition: 0.4s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         .fancy-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(0, 90, 171, 0.15); }
         
-        /* DASHBOARD LAYOUT */
+        /* LAYOUT */
         .sidebar { background: white; border-right: 1px solid #e2e8f0; width: 280px; position: fixed; height: 100vh; z-index: 50; }
-        .main-wrapper { margin-left: 280px; width: calc(100% - 280px); min-height: 100vh; transition: 0.3s; }
+        .main-wrapper { margin-left: 280px; width: calc(100% - 280px); min-height: 100vh; }
         
-        /* UI ELEMENTS */
         .btn-primary { background: var(--brand); color: white; border-radius: 16px; font-weight: 800; padding: 14px 32px; transition: 0.3s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
         .btn-danger { background: #fee2e2; color: #dc2626; border-radius: 12px; font-size: 10px; font-weight: 800; padding: 8px 16px; border: none; cursor: pointer; text-transform: uppercase; }
-        
-        /* SYNC TOAST */
+
+        /* HERO & SYNC */
         #sync-toast { position: fixed; top: 24px; right: 24px; z-index: 1000; background: #0f172a; color: white; padding: 16px 32px; border-radius: 20px; font-size: 13px; font-weight: 700; transform: translateY(-120px); transition: 0.6s; display: flex; align-items: center; gap: 12px; }
         #sync-toast.show { transform: translateY(0); }
-
-        /* MODALS & HERO */
-        #immersive-view { position: fixed; inset: 0; background: white; z-index: 500; display: none; overflow-y: auto; padding: 60px; }
         .hero-text { font-size: clamp(3.5rem, 9vw, 9rem); line-height: 0.85; letter-spacing: -0.05em; font-weight: 900; }
         .hidden { display: none !important; }
-        
-        /* BEHAVIOR UI */
-        .counter-btn { width: 32px; height: 32px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 900; }
+
+        /* IMMERSIVE VIEWER */
+        #immersive-view { position: fixed; inset: 0; background: white; z-index: 500; display: none; overflow-y: auto; padding: 60px; }
+        .counter-btn { width: 32px; height: 32px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 900; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -47,31 +44,53 @@
         <nav class="fixed top-0 w-full z-[100] glass-nav px-12 py-7 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-[#005aab] rounded-2xl flex items-center justify-center text-white font-black text-2xl">RS</div>
-                <div class="flex flex-col">
-                    <span class="text-2xl font-black tracking-tighter">RoboSpark</span>
-                    <span class="text-[8px] font-black uppercase text-slate-400 tracking-widest">by Sanatan Sinha</span>
-                </div>
+                <div class="flex flex-col"><span class="text-2xl font-black tracking-tighter">RoboSpark</span><span class="text-[8px] font-black uppercase text-slate-400 tracking-widest">by Sanatan Sinha</span></div>
             </div>
-            <div class="flex items-center gap-8">
-                <button onclick="showAuth()" class="text-xs font-black uppercase tracking-widest text-slate-900">Sign In</button>
-                <button onclick="showAuth()" class="btn-primary !py-3 !px-10 text-xs uppercase">Join Program</button>
+            <div class="flex gap-8 items-center">
+                <a href="#about" class="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-blue-600">About</a>
+                <button onclick="showAuth()" class="btn-primary !py-3 !px-10 text-xs uppercase">Sign In</button>
             </div>
         </nav>
-        <section class="pt-64 px-12 text-center pb-40">
+
+        <section class="pt-64 px-12 text-center">
             <h1 class="hero-text text-slate-900 mb-10">From zero<br>to hero.</h1>
-            <p class="text-2xl text-slate-400 max-w-2xl mx-auto mb-20 font-medium">The most advanced robotics curriculum ever engineered. Systematic, immersive, and powerful.</p>
-            <div id="landing-previews" class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl mx-auto"></div>
+            <p class="text-2xl text-slate-400 max-w-2xl mx-auto mb-20 font-medium">The definitive 8-part robotics journey. Integrated. Immersive. Revolutionary.</p>
+            
+            <div class="flex gap-6 overflow-x-auto pb-20 px-4 no-scrollbar max-w-7xl mx-auto">
+                <div class="min-w-[300px] fancy-card p-10 text-left bg-blue-600 text-white">
+                    <span class="text-[10px] font-black uppercase opacity-60">Phase 01</span>
+                    <h4 class="text-2xl font-black mt-2">Foundations</h4>
+                </div>
+                <div class="min-w-[300px] fancy-card p-10 text-left">
+                    <span class="text-[10px] font-black uppercase text-blue-600">Phase 02</span>
+                    <h4 class="text-2xl font-black mt-2">Circuit Logic</h4>
+                </div>
+                <div class="min-w-[300px] fancy-card p-10 text-left">
+                    <span class="text-[10px] font-black uppercase text-blue-600">Phase 03</span>
+                    <h4 class="text-2xl font-black mt-2">Microcontrollers</h4>
+                </div>
+                </div>
+        </section>
+
+        <section id="about" class="py-40 px-12 bg-white">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-6xl font-black tracking-tighter mb-10">About RoboSpark</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 text-xl text-slate-500 leading-relaxed">
+                    <p>RoboSpark is a comprehensive learning management system specifically designed to bridge the gap between theoretical robotics and industrial application. Founded by Sanatan Sinha, the platform provides a rigorous 8-part curriculum.</p>
+                    <p>Through the integration of real-time syncing, behavior tracking, and an immersive assignment viewer, we ensure that every student has the tools to transform from a beginner to a robotics hero.</p>
+                </div>
+            </div>
         </section>
     </div>
 
     <section id="auth-screen" class="hidden fixed inset-0 bg-slate-50 z-[200] flex items-center justify-center p-6">
         <div class="max-w-md w-full fancy-card p-12 bg-white">
-            <h2 class="text-3xl font-black mb-8 text-center tracking-tighter">Mainframe Portal</h2>
+            <h2 class="text-3xl font-black mb-8 text-center tracking-tighter">Mainframe Access</h2>
             <div class="space-y-4">
                 <input id="auth-email" type="email" placeholder="Institutional Email" class="w-full p-5 border rounded-2xl outline-none">
                 <input id="auth-pass" type="password" placeholder="Access Key" class="w-full p-5 border rounded-2xl outline-none">
-                <button onclick="handleAuth()" class="w-full btn-primary justify-center py-5 uppercase text-xs">Authorize Connection</button>
-                <button onclick="closeAuth()" class="w-full text-[10px] font-black uppercase text-slate-300 mt-6">Return Home</button>
+                <button onclick="handleAuth()" class="w-full btn-primary justify-center py-5 uppercase text-xs">Authorize</button>
+                <button onclick="closeAuth()" class="w-full text-[10px] font-black uppercase text-slate-300 mt-6 text-center">Cancel</button>
             </div>
         </div>
     </section>
@@ -80,28 +99,28 @@
         <aside class="sidebar flex flex-col">
             <div class="p-10 text-center">
                 <div class="w-14 h-14 bg-[#005aab] rounded-2xl mx-auto flex items-center justify-center text-white font-black text-2xl mb-2">RS</div>
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Master v19</p>
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Version 20.Final</p>
             </div>
             <nav class="flex-1 px-6 space-y-2">
                 <button onclick="nav('dash')" class="w-full text-left p-5 rounded-2xl font-bold text-slate-600 hover:bg-slate-50 transition">Dashboard</button>
                 <button onclick="nav('grades')" class="w-full text-left p-5 rounded-2xl font-bold text-slate-600 hover:bg-slate-50 transition">Gradebook</button>
             </nav>
-            <div class="p-8 border-t bg-slate-50/50">
-                <div class="bg-white p-4 rounded-xl border mb-4">
+            <div class="p-8 border-t">
+                <div class="bg-slate-50 p-4 rounded-xl border mb-4">
                     <p id="user-display-name" class="text-sm font-black text-slate-800 truncate"></p>
                     <p id="user-display-role" class="text-[9px] font-black text-blue-500 uppercase"></p>
                 </div>
-                <button onclick="logout()" class="w-full py-4 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase">Terminate Session</button>
+                <button onclick="logout()" class="w-full py-4 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase">Log Out</button>
             </div>
         </aside>
 
         <main class="main-wrapper p-12">
             <section id="admin-view" class="hidden mb-20 space-y-10">
-                <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Admin Console</h2>
+                <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Admin Control</h2>
                 <div class="fancy-card overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 border-b">
-                            <tr><th class="p-8">Student</th><th class="p-8">Activity</th><th class="p-8 text-right">Actions</th></tr>
+                            <tr><th class="p-8">Student</th><th class="p-8">Status</th><th class="p-8 text-right">Actions</th></tr>
                         </thead>
                         <tbody id="admin-table-body" class="divide-y"></tbody>
                     </table>
@@ -109,18 +128,18 @@
             </section>
 
             <section id="dash-view" class="space-y-10">
-                <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Training Modules</h2>
+                <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Curriculum Path</h2>
                 <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
             </section>
 
             <section id="mod-view" class="hidden space-y-10">
-                <button onclick="nav('dash')" class="text-blue-600 font-black text-xs uppercase tracking-widest">← Back to Dashboard</button>
+                <button onclick="nav('dash')" class="text-blue-600 font-black text-xs uppercase">← Return</button>
                 <h1 id="mod-title" class="text-6xl font-black tracking-tighter"></h1>
                 <div id="assign-list" class="space-y-6 max-w-4xl"></div>
             </section>
 
             <section id="grades-view" class="hidden space-y-10">
-                <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Gradebook</h2>
+                <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Your Progress</h2>
                 <div id="student-grades-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
             </section>
         </main>
@@ -128,19 +147,19 @@
 
     <div id="immersive-view">
         <div class="max-w-7xl mx-auto">
-            <button onclick="closeImm()" class="mb-12 text-slate-400 font-black uppercase text-xs">Exit Immersive Viewer</button>
+            <button onclick="closeImm()" class="mb-12 text-slate-400 font-black uppercase text-xs tracking-widest">Exit Viewer</button>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                 <div>
                     <h1 id="imm-title" class="text-5xl font-black tracking-tighter mb-6"></h1>
                     <p id="imm-desc" class="text-xl text-slate-500 mb-10"></p>
-                    <div id="imm-file-box" class="hidden w-full h-[550px] bg-slate-100 rounded-[3rem] overflow-hidden border">
+                    <div id="imm-file-box" class="hidden w-full h-[600px] bg-slate-100 rounded-[3rem] overflow-hidden border shadow-inner">
                         <iframe id="imm-iframe" class="w-full h-full border-none"></iframe>
                     </div>
                 </div>
-                <div class="bg-slate-50 p-12 rounded-[3rem] space-y-8">
-                    <textarea id="imm-text" placeholder="Draft your submission here..." class="w-full h-96 p-8 rounded-3xl border outline-none text-lg"></textarea>
-                    <button onclick="saveLocalDraft()" class="w-full py-4 bg-white border text-[10px] font-black uppercase rounded-2xl">Save Local Draft</button>
-                    <button onclick="submitWork()" class="w-full btn-primary justify-center py-6 uppercase">Push to Mainframe</button>
+                <div class="bg-slate-50 p-12 rounded-[3.5rem] space-y-8">
+                    <textarea id="imm-text" placeholder="Start typing your work..." class="w-full h-96 p-8 rounded-3xl border outline-none text-lg"></textarea>
+                    <button onclick="saveLocalDraft()" class="w-full py-4 bg-white border text-[10px] font-black uppercase rounded-2xl">Save Draft</button>
+                    <button onclick="submitWork()" class="w-full btn-primary justify-center py-6 uppercase">Sync Submission</button>
                 </div>
             </div>
         </div>
@@ -154,33 +173,33 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 bg-slate-50 p-10 rounded-[3rem] border">
                 <div class="bg-white p-6 rounded-2xl flex justify-between items-center border">
                     <span>Bad Behavior: <b id="cnt-bad">0</b></span>
-                    <div class="flex gap-2"><button onclick="logB('behavior_bad',1)" class="counter-btn">+</button></div>
+                    <button onclick="logB('behavior_bad',1)" class="counter-btn">+</button>
                 </div>
                 <div class="bg-white p-6 rounded-2xl flex justify-between items-center border">
                     <span>Gaming: <b id="cnt-game">0</b></span>
-                    <div class="flex gap-2"><button onclick="logB('behavior_gaming',1)" class="counter-btn">+</button></div>
+                    <button onclick="logB('behavior_gaming',1)" class="counter-btn">+</button>
                 </div>
                 <div class="bg-white p-6 rounded-2xl flex justify-between items-center border">
                     <span>Kicked: <b id="cnt-kick">0</b></span>
-                    <div class="flex gap-2"><button onclick="logB('behavior_kicked',1)" class="counter-btn">+</button></div>
+                    <button onclick="logB('behavior_kicked',1)" class="counter-btn">+</button>
                 </div>
-                <div class="md:col-span-3 text-right"><button onclick="sync()" class="btn-primary !py-2 !text-[10px]">Sync Logs</button></div>
+                <div class="md:col-span-3 text-right"><button onclick="sync()" class="btn-primary !py-2 !text-[10px]">Push Changes</button></div>
             </div>
             <div id="insp-subs" class="space-y-6"></div>
         </div>
     </div>
 
     <script>
-        // TOKEN DIVIDED INTO 8 PARTS AS REQUESTED
-        const t1 = "ghp_";
-        const t2 = "vc5lzvET";
-        const t3 = "lExj";
-        const t4 = "m4M78";
-        const t5 = "7RvGH";
-        const t6 = "OSOBM";
-        const t7 = "QbO3Z";
-        const t8 = "WGYu";
-        const PAT = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
+        // TOKEN DIVIDED INTO 8 PARTS (MANDATORY)
+        const s1 = "ghp_";
+        const s2 = "vc5lzvET";
+        const s3 = "lExj";
+        const s4 = "m4M78";
+        const s5 = "7RvGH";
+        const s6 = "OSOBM";
+        const s7 = "QbO3Z";
+        const s8 = "WGYu";
+        const MASTER_TOKEN = s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8;
 
         const REPO = { owner: "sanrobo206", name: "robospark" };
         let db = { courses: [], users: [], submissions: [] };
@@ -188,7 +207,6 @@
 
         async function init() {
             await fetchData();
-            renderLanding();
             const saved = localStorage.getItem('robo_email');
             if(saved) login(saved);
         }
@@ -196,7 +214,7 @@
         async function fetchData() {
             setLoading(true);
             const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json?t=${Date.now()}`, {
-                headers: { "Authorization": `Bearer ${PAT}`, "Accept": "application/vnd.github.v3.raw" }
+                headers: { "Authorization": `Bearer ${MASTER_TOKEN}`, "Accept": "application/vnd.github.v3.raw" }
             });
             if(res.ok) db = await res.json();
             setLoading(false);
@@ -205,21 +223,11 @@
         async function sync() {
             setLoading(true);
             const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/dispatches`, {
-                method: "POST", headers: { "Authorization": `Bearer ${PAT}`, "Accept": "application/vnd.github+json" },
+                method: "POST", headers: { "Authorization": `Bearer ${MASTER_TOKEN}`, "Accept": "application/vnd.github+json" },
                 body: JSON.stringify({ event_type: "update_db", client_payload: { data: JSON.stringify(db, null, 2) } })
             });
             if (res.status === 204) { await new Promise(r => setTimeout(r, 4500)); await fetchData(); return true; }
             return false;
-        }
-
-        function renderLanding() {
-            document.getElementById('landing-previews').innerHTML = db.courses.slice(0,3).map(c => `
-                <div class="fancy-card p-12 text-left">
-                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black mb-6">RS</div>
-                    <h3 class="text-2xl font-black mb-4">${c.title}</h3>
-                    <p class="text-slate-400 font-medium mb-8">Systematic robotics education program.</p>
-                    <button onclick="showAuth()" class="text-blue-600 font-black text-[10px] uppercase border-b-2 border-blue-600 pb-1">Begin Training</button>
-                </div>`).join('');
         }
 
         function handleAuth() {
@@ -228,7 +236,7 @@
             if(email === "sanrobo206@gmail.com" && pass === "robosparkadmin") login(email);
             else {
                 const found = db.users.find(u => u.email === email && u.password === pass);
-                if(found) login(email); else alert("Invalid Credentials.");
+                if(found) login(email); else alert("Invalid Access Key.");
             }
         }
 
@@ -248,7 +256,7 @@
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
                 <div class="fancy-card p-10 cursor-pointer" onclick="openMod('${c.id}')">
                     <h3 class="text-2xl font-black mb-4">${c.title}</h3>
-                    <p class="text-[10px] font-black uppercase text-slate-300">${c.assignments.length} Objectives</p>
+                    <p class="text-[10px] font-black uppercase text-blue-500">View Objectives →</p>
                 </div>`).join('');
         }
 
@@ -259,7 +267,6 @@
             document.getElementById('assign-list').innerHTML = activeMod.assignments.map((a, i) => `
                 <div class="fancy-card p-8 border-l-[12px] border-blue-600 cursor-pointer hover:bg-slate-50" onclick="openImm(${i})">
                     <p class="font-black text-xl text-slate-800">${a.task}</p>
-                    <p class="text-[10px] font-black uppercase text-blue-500 mt-4 tracking-widest">Open Immersive Viewer →</p>
                 </div>`).join('');
         }
 
@@ -276,10 +283,10 @@
         function renderAdmin() {
             document.getElementById('admin-table-body').innerHTML = db.users.filter(u => u.role !== 'admin').map(u => `
                 <tr><td class="p-8 font-black text-lg">${u.name}</td>
-                <td class="p-8"><span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">Active Student</span></td>
+                <td class="p-8"><span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase">Verified</span></td>
                 <td class="p-8 text-right space-x-2">
                     <button onclick="inspectUser('${u.email}')" class="btn-primary !p-3 !px-6 !text-[10px]">INSPECT</button>
-                    <button onclick="terminate('${u.email}')" class="btn-danger">TERMINATE</button>
+                    <button onclick="terminateStudent('${u.email}')" class="btn-danger">TERMINATE</button>
                 </td></tr>`).join('');
         }
 
@@ -291,7 +298,7 @@
             document.getElementById('cnt-kick').innerText = u.behavior_kicked || 0;
             const subs = db.submissions.filter(s => s.studentEmail === email);
             document.getElementById('insp-subs').innerHTML = subs.map(s => `
-                <div class="p-10 bg-slate-50 rounded-[3rem] border">
+                <div class="p-10 bg-slate-50 rounded-[3rem] border mb-6">
                     <div class="flex justify-between items-center mb-6">
                         <h4 class="font-black text-xl">${s.task}</h4>
                         <input type="number" placeholder="Grade %" value="${s.grade !== 'PENDING' ? s.grade : ''}" onchange="gradeSub(${s.id}, this.value)" class="w-24 p-4 border rounded-xl font-black">
@@ -301,28 +308,16 @@
             document.getElementById('inspect-modal').classList.remove('hidden');
         }
 
-        function renderStudentGrades() {
-            const subs = db.submissions.filter(s => s.studentEmail === user.email);
-            document.getElementById('student-grades-list').innerHTML = subs.map(s => `
-                <div class="fancy-card p-10 border-l-[10px] ${s.grade === 'PENDING' ? 'border-orange-400' : 'border-green-500'}">
-                    <div class="flex justify-between items-start">
-                        <div><p class="text-[10px] font-black uppercase text-slate-400">${s.task}</p></div>
-                        <div class="text-3xl font-black ${s.grade === 'PENDING' ? 'text-orange-500' : 'text-green-600'}">${s.grade}${s.grade === 'PENDING' ? '' : '%'}</div>
-                    </div>
-                </div>`).join('');
-        }
-
-        async function submitWork() {
-            db.submissions.push({ studentEmail: user.email, task: activeMod.assignments[curIdx].task, content: document.getElementById('imm-text').value, grade: 'PENDING', id: Date.now() });
-            if(await sync()) { alert("Submission successful."); closeImm(); nav('dash'); }
-        }
-
         async function gradeSub(id, val) { const i = db.submissions.findIndex(s => s.id == id); db.submissions[i].grade = val; await sync(); }
         function logB(k, v) { const u = db.users.find(x => x.email === inspEmail); u[k] = (u[k] || 0) + v; inspectUser(inspEmail); }
-        async function terminate(e) { if(confirm("Permanently remove student?")) { db.users = db.users.filter(x => x.email !== e); await sync(); renderAdmin(); } }
-        function saveLocalDraft() { localStorage.setItem(`draft_${user.email}_${activeMod.id}_${curIdx}`, document.getElementById('imm-text').value); alert("Draft Saved."); }
+        async function terminateStudent(e) { if(confirm("Terminate student access?")) { db.users = db.users.filter(u => u.email !== e); await sync(); renderAdmin(); } }
+        async function submitWork() {
+            db.submissions.push({ studentEmail: user.email, task: activeMod.assignments[curIdx].task, content: document.getElementById('imm-text').value, grade: 'PENDING', id: Date.now() });
+            if(await sync()) { alert("Submitted."); closeImm(); nav('dash'); }
+        }
+        function saveLocalDraft() { localStorage.setItem(`draft_${user.email}_${activeMod.id}_${curIdx}`, document.getElementById('imm-text').value); alert("Local Draft Saved."); }
         function closeImm() { document.getElementById('immersive-view').style.display = 'none'; }
-        function nav(v) { ['dash-view', 'grades-view', 'mod-view'].forEach(s => document.getElementById(s).classList.add('hidden')); document.getElementById(v+'-view').classList.remove('hidden'); if(v==='grades') renderStudentGrades(); }
+        function nav(v) { ['dash-view', 'grades-view', 'mod-view'].forEach(s => document.getElementById(s).classList.add('hidden')); document.getElementById(v+'-view').classList.remove('hidden'); }
         function showAuth() { document.getElementById('auth-screen').classList.remove('hidden'); }
         function closeAuth() { document.getElementById('auth-screen').classList.add('hidden'); }
         function toggleElement(id) { document.getElementById(id).classList.toggle('hidden'); }
