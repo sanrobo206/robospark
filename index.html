@@ -10,37 +10,25 @@
         :root { --brand: #005aab; --brand-glow: rgba(0, 90, 171, 0.15); --bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #1e293b; margin: 0; scroll-behavior: smooth; overflow-x: hidden; }
         
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .reveal { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .scale-up { animation: scaleIn 0.6s ease-out forwards; }
+
         .mesh-gradient {
             background: radial-gradient(at 0% 0%, rgba(0, 90, 171, 0.05) 0px, transparent 50%),
                         radial-gradient(at 100% 100%, rgba(0, 90, 171, 0.05) 0px, transparent 50%);
         }
 
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .hero-title {
-            background: linear-gradient(135deg, #0f172a 0%, #005aab 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        .hero-title { background: linear-gradient(135deg, #0f172a 0%, #005aab 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .fancy-card {
-            background: white;
-            border-radius: 32px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: white; border-radius: 32px; border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-
-        .fancy-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px -12px rgba(0, 90, 171, 0.15);
-            border-color: var(--brand);
-        }
+        .fancy-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(0, 90, 171, 0.15); border-color: var(--brand); }
 
         .sidebar { background: white; border-right: 1px solid #e2e8f0; width: 280px; position: fixed; height: 100vh; z-index: 50; }
         .main-wrapper { margin-left: 280px; width: calc(100% - 280px); min-height: 100vh; }
@@ -55,9 +43,8 @@
 
         .hidden { display: none !important; }
         input, textarea, select { background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 16px !important; padding: 16px !important; outline: none; transition: 0.2s; }
-        input:focus { border-color: var(--brand) !important; ring: 2px var(--brand-glow); }
-
-        #sync-toast { position: fixed; top: 24px; right: 24px; z-index: 1000; background: #0f172a; color: white; padding: 16px 32px; border-radius: 20px; font-size: 13px; font-weight: 700; transform: translateY(-120px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        
+        #sync-toast { position: fixed; top: 24px; right: 24px; z-index: 1000; background: #0f172a; color: white; padding: 16px 32px; border-radius: 20px; font-size: 13px; font-weight: 700; transform: translateY(-120px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 12px; }
         #sync-toast.show { transform: translateY(0); }
     </style>
 </head>
@@ -98,52 +85,41 @@
                 <div class="w-2 h-2 rounded-full bg-slate-300"></div> Gradebook
             </button>
         </nav>
-        <div class="p-8 border-t border-slate-100 mt-auto bg-slate-50/50">
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
+        <div class="p-8 border-t border-slate-100 mt-auto bg-slate-50/50 text-center">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 mb-4">
                 <p id="user-display-name" class="text-sm font-black text-slate-800 truncate"></p>
                 <p id="user-display-uid" class="text-[10px] font-mono text-blue-500 font-black mt-1 uppercase"></p>
             </div>
-            <button onclick="logout()" class="w-full py-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition">Log Out</button>
+            <button onclick="logout()" class="w-full py-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase hover:bg-red-100 transition">Log Out</button>
         </div>
     </aside>
 
     <div id="main-content">
         <section id="home-view" class="min-h-screen pt-72 px-12">
-            <div class="max-w-6xl mx-auto text-center">
+            <div class="max-w-6xl mx-auto text-center reveal">
                 <h1 class="text-8xl lg:text-[10rem] font-black tracking-tighter mb-10 leading-[0.85] hero-title">RoboSpark:<br>From zero to hero</h1>
                 <p class="text-2xl text-slate-400 max-w-2xl mx-auto mb-20 font-medium leading-relaxed">The definitive robotics education platform. Explore the curriculum via the About section or Join to begin the training.</p>
             </div>
-            <div id="landing-course-previews" class="max-w-7xl mx-auto mt-40 grid grid-cols-1 md:grid-cols-3 gap-10 pb-40"></div>
+            <div id="landing-course-previews" class="max-w-7xl mx-auto mt-40 grid grid-cols-1 md:grid-cols-3 gap-10 pb-40 reveal" style="animation-delay: 0.2s;"></div>
         </section>
 
         <section id="about-view" class="hidden min-h-screen pt-40 px-12 bg-white">
-            <div class="max-w-5xl mx-auto">
-                <button onclick="showSection('home-view')" class="mb-16 text-blue-600 font-black uppercase text-xs tracking-widest flex items-center gap-3 group"><span class="group-hover:-translate-x-2 transition">←</span> Back Home</button>
+            <div class="max-w-5xl mx-auto reveal">
+                <button onclick="showSection('home-view')" class="mb-16 text-blue-600 font-black uppercase text-xs tracking-widest flex items-center gap-3 transition">← Back Home</button>
                 <h2 class="text-6xl font-black text-slate-900 tracking-tight mb-12">About RoboSpark by Sanatan Sinha</h2>
                 <div class="space-y-12 text-xl text-slate-600 leading-[1.8]">
-                    <p>
-                        RoboSpark by Sanatan Sinha provides a systematic path for robotics development. The curriculum begins with the theory for microcontrollers, servo motors, and all other sensors. Understanding those components ensures that the foundation for building any machine is solid. Those concepts cover how sensors detect data and how microcontrollers process that information to control servo motors with precision.
-                    </p>
-                    <p class="p-10 bg-slate-50 rounded-[40px] border border-slate-100 italic font-medium">
-                        After mastering those theoretical aspects, the focus shifts to learning CAD design on Onshape. This phase involves creating digital models of robot parts and assemblies. Onshape provides the tools necessary to visualize those mechanical structures before physical construction begins. That process allows for testing the fit and function of these components in a virtual environment.
-                    </p>
-                    <p>
-                        Following the completion of those digital designs, the next step is 3D printing parts. This stage transforms those virtual models into physical objects. That transition from software to hardware is essential for prototyping the custom enclosures and mechanical links needed for the robot. 
-                    </p>
-                    <p>
-                        The final stage is real robotics. This level involves integrating those 3D printed parts with the microcontrollers, servo motors, and sensors studied earlier. That culmination results in a fully functional autonomous or controlled robot. These steps ensure that those who complete the program transition from having zero knowledge to becoming a hero in the field of robotics. This entire educational ecosystem is developed by Sanatan Sinha to provide a professional learning experience.
-                    </p>
-                </div>
-                <div class="py-32 flex justify-center">
-                    <div class="w-24 h-1 bg-slate-100 rounded-full"></div>
+                    <p>RoboSpark by Sanatan Sinha provides a systematic path for robotics development. The curriculum begins with the theory for microcontrollers, servo motors, and all other sensors. Understanding those components ensures that the foundation for building any machine is solid. Those concepts cover how sensors detect data and how microcontrollers process that information to control servo motors with precision.</p>
+                    <p class="p-10 bg-slate-50 rounded-[40px] border border-slate-100 italic font-medium">After mastering those theoretical aspects, the focus shifts to learning CAD design on Onshape. This phase involves creating digital models of robot parts and assemblies. Onshape provides the tools necessary to visualize those mechanical structures before physical construction begins. That process allows for testing the fit and function of these components in a virtual environment.</p>
+                    <p>Following the completion of those digital designs, the next step is 3D printing parts. This stage transforms those virtual models into physical objects. That transition from software to hardware is essential for prototyping the custom enclosures and mechanical links needed for the robot. </p>
+                    <p>The final stage is real robotics. This level involves integrating those 3D printed parts with the microcontrollers, servo motors, and sensors studied earlier. That culmination results in a fully functional autonomous or controlled robot. These steps ensure that those who complete the program transition from having zero knowledge to becoming a hero in the field of robotics. This entire educational ecosystem is developed by Sanatan Sinha to provide a professional learning experience.</p>
                 </div>
             </div>
         </section>
 
         <section id="auth-view" class="hidden min-h-screen flex items-center justify-center p-8 bg-slate-50">
-            <div class="max-w-md w-full fancy-card p-16 bg-white shadow-2xl">
+            <div class="max-w-md w-full fancy-card p-16 bg-white shadow-2xl scale-up">
                 <div class="text-center mb-12">
-                    <div class="w-20 h-20 bg-[#005aab] rounded-3xl flex items-center justify-center text-white font-black text-4xl mb-6 mx-auto shadow-2xl shadow-blue-200">RS</div>
+                    <div class="w-20 h-20 bg-[#005aab] rounded-3xl flex items-center justify-center text-white font-black text-4xl mb-6 mx-auto">RS</div>
                     <h1 id="auth-title" class="text-4xl font-black text-slate-900 tracking-tighter">Portal Access</h1>
                 </div>
                 <div class="space-y-5">
@@ -155,7 +131,7 @@
                         <input id="reg-name" placeholder="Full Legal Name" class="w-full">
                         <input id="reg-pass" type="password" placeholder="Create Access Key" class="w-full">
                     </div>
-                    <button onclick="handleAuth()" class="w-full btn-primary justify-center py-5 uppercase tracking-widest text-xs mt-4">Authorize</button>
+                    <button onclick="handleAuth()" class="w-full btn-primary justify-center py-5 uppercase text-xs mt-4">Authorize</button>
                     <button onclick="showSection('home-view')" class="w-full text-[10px] text-slate-300 font-black uppercase mt-10 tracking-widest">Cancel Connection</button>
                 </div>
             </div>
@@ -163,15 +139,14 @@
 
         <div id="app-view" class="hidden p-12 main-wrapper">
             <section id="admin-panel" class="hidden mb-20 space-y-10">
-                <div class="flex justify-between items-end border-b border-slate-100 pb-10">
+                <div class="flex justify-between items-end border-b pb-10">
                     <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Admin Console</h2>
-                    <div class="bg-blue-600 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Verified Master</div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     <div class="fancy-card p-10"><input id="c-title" placeholder="Course Title" class="w-full mb-6"><button onclick="createModule()" class="w-full btn-primary justify-center">Create Module</button></div>
                     <div class="fancy-card p-10 lg:col-span-2 max-h-48 overflow-y-auto"><div id="directory-list" class="flex flex-wrap gap-3"></div></div>
                 </div>
-                <div class="fancy-card overflow-hidden">
+                <div class="fancy-card overflow-hidden reveal">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 border-b">
                             <tr><th class="p-8">User Profile</th><th class="p-8">Submissions</th><th class="p-8">Performance</th><th class="p-8 text-right">Review</th></tr>
@@ -181,45 +156,41 @@
                 </div>
             </section>
 
-            <section id="dashboard-view" class="space-y-12">
+            <section id="dashboard-view" class="space-y-12 reveal">
                 <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Active Courses</h2>
                 <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
             </section>
 
-            <section id="module-details" class="hidden space-y-12">
+            <section id="module-details" class="hidden space-y-12 reveal">
                 <div class="flex items-center gap-8">
-                    <button onclick="navigate('dashboard')" class="w-16 h-16 rounded-3xl fancy-card flex items-center justify-center font-black text-xl hover:bg-slate-50">←</button>
+                    <button onclick="navigate('dashboard')" class="w-16 h-16 rounded-3xl fancy-card flex items-center justify-center font-black">←</button>
                     <h1 id="mod-title-hero" class="text-6xl font-black text-slate-900 tracking-tighter"></h1>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
                     <div class="lg:col-span-2 space-y-10">
                         <div class="bg-slate-900 p-12 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 blur-[100px]"></div>
                             <h2 class="text-3xl font-black mb-3 italic">Live Session</h2>
-                            <p class="text-slate-400 mb-10 font-bold uppercase tracking-widest text-xs">Instructor: Sanatan Sinha</p>
-                            <a id="mod-meet-link" target="_blank" class="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black uppercase text-xs inline-block hover:scale-105 transition">Join Google Meet</a>
+                            <p class="text-slate-400 mb-10 text-xs">Instructor: Sanatan Sinha</p>
+                            <a id="mod-meet-link" target="_blank" class="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black uppercase text-xs inline-block">Join Google Meet</a>
                         </div>
-                        <div id="admin-add-assign" class="hidden fancy-card p-10 bg-blue-50/30 border-dashed border-2 border-blue-200">
+                        <div id="admin-add-assign" class="hidden fancy-card p-10 bg-blue-50/30 border-dashed border-2">
                             <textarea id="new-assign-text" placeholder="Objective details..." class="w-full mb-6 h-40"></textarea>
-                            <div class="mb-8 p-6 bg-white rounded-2xl border border-slate-100">
-                                <label class="text-[10px] font-black text-slate-400 block mb-3 uppercase tracking-widest">Administrative Attachment</label>
-                                <input type="file" id="admin-file-input" class="text-xs font-bold text-slate-500">
-                            </div>
-                            <button onclick="addAssignmentToModule()" class="btn-primary w-full justify-center py-5">Deploy Objective</button>
+                            <input type="file" id="admin-file-input" class="text-xs font-bold text-slate-500 mb-6">
+                            <button onclick="addAssignmentToModule()" class="btn-primary w-full justify-center">Deploy Objective</button>
                         </div>
                         <div id="assign-list" class="space-y-6"></div>
                     </div>
                     <div class="fancy-card p-10 h-fit sticky top-12">
                         <h3 class="font-black mb-8 uppercase text-[10px] tracking-[0.2em] text-blue-500">Submission Portal</h3>
-                        <label class="text-[10px] font-black uppercase mb-3 block text-slate-400">Select Objective</label>
-                        <select id="assign-selector" class="w-full mb-8 font-bold text-slate-800"></select>
+                        <label class="text-[10px] font-black uppercase mb-3 block">Select Objective</label>
+                        <select id="assign-selector" class="w-full mb-8 font-bold"></select>
                         <textarea id="sub-content" placeholder="Type report here..." class="w-full h-64 mb-8"></textarea>
-                        <button onclick="submitAssignment()" class="w-full btn-primary bg-slate-900 hover:bg-black justify-center py-5">Push to Mainframe</button>
+                        <button onclick="submitAssignment()" class="w-full btn-primary bg-slate-900 hover:bg-black justify-center">Push to Mainframe</button>
                     </div>
                 </div>
             </section>
 
-            <section id="grades-view" class="hidden space-y-12">
+            <section id="grades-view" class="hidden space-y-12 reveal">
                 <h2 class="text-5xl font-black text-slate-900 tracking-tighter">Performance Transcript</h2>
                 <div id="student-transcript" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
             </section>
@@ -228,21 +199,15 @@
 
     <div id="grading-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[200] flex items-center justify-center hidden p-8">
         <div class="bg-white w-full max-w-6xl rounded-[4rem] p-16 h-[90vh] overflow-y-auto relative shadow-2xl">
-            <button onclick="toggleElement('grading-modal')" class="absolute top-12 right-12 text-slate-400 font-black uppercase text-xs tracking-widest hover:text-red-500 transition">Exit Inspection</button>
+            <button onclick="toggleElement('grading-modal')" class="absolute top-12 right-12 text-slate-400 font-black uppercase text-xs">Exit Inspection</button>
             <h3 id="inspect-name" class="text-5xl font-black mb-4 text-slate-900 tracking-tighter"></h3>
             <div id="inspect-subs" class="space-y-10 mt-16"></div>
         </div>
     </div>
 
     <script>
-        const _v1 = "ghp_";
-        const _v2 = "vc5lzvET";
-        const _v3 = "lExj";
-        const _v4 = "m4M78";
-        const _v5 = "7RvGH";
-        const _v6 = "OSOBM";
-        const _v7 = "QbO3Z";
-        const _v8 = "WGYu";
+        const _v1 = "ghp_"; const _v2 = "vc5lzvET"; const _v3 = "lExj"; const _v4 = "m4M78";
+        const _v5 = "7RvGH"; const _v6 = "OSOBM"; const _v7 = "QbO3Z"; const _v8 = "WGYu";
         const REPO = { owner: "sanrobo206", name: "robospark", token: _v1 + _v2 + _v3 + _v4 + _v5 + _v6 + _v7 + _v8 };
 
         let db = { courses: [], users: [], submissions: [] };
@@ -269,8 +234,7 @@
         function showSection(id) {
             ['home-view', 'about-view', 'auth-view', 'app-view'].forEach(s => document.getElementById(s).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
-            if(id === 'home-view' || id === 'about-view') document.getElementById('landing-nav').classList.remove('hidden');
-            else document.getElementById('landing-nav').classList.add('hidden');
+            document.getElementById('landing-nav').classList.toggle('hidden', id !== 'home-view' && id !== 'about-view');
         }
 
         function showAuth(mode) {
@@ -285,8 +249,8 @@
         function renderLandingPreviews() {
             const grid = document.getElementById('landing-course-previews');
             grid.innerHTML = db.courses.slice(0, 3).map(c => `
-                <div class="fancy-card p-12 bg-white group">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center font-black mb-8 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">RS</div>
+                <div class="fancy-card p-12 bg-white group scale-up">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center font-black mb-8">RS</div>
                     <h3 class="text-3xl font-black text-slate-800 mb-6 tracking-tight">${c.title}</h3>
                     <p class="text-base text-slate-400 font-medium mb-10 leading-relaxed">Transition from zero knowledge to hero mastery in this specialized track.</p>
                     <button onclick="showAuth('signup')" class="text-blue-600 font-black uppercase text-[10px] tracking-widest border-b-4 border-blue-600/20 hover:border-blue-600 pb-2 transition-all">Begin Training</button>
@@ -308,8 +272,7 @@
                 const pass = document.getElementById('login-pass').value.trim();
                 if(emailInput === "sanrobo206@gmail.com" && pass === "robosparkadmin") { finalizeLogin(emailInput); return; }
                 const user = db.users.find(u => u.email === emailInput && u.password === pass);
-                if(user) finalizeLogin(emailInput);
-                else alert("Unauthorized access.");
+                if(user) finalizeLogin(emailInput); else alert("Unauthorized access.");
             }
         }
 
@@ -336,11 +299,7 @@
                     headers: { "Authorization": `Bearer ${REPO.token}`, "Accept": "application/vnd.github+json" },
                     body: JSON.stringify({ event_type: "update_db", client_payload: { data: JSON.stringify(db, null, 2) } })
                 });
-                if (response.status === 204) {
-                    await new Promise(r => setTimeout(r, 4500));
-                    await fetchFreshData();
-                    return true;
-                }
+                if (response.status === 204) { await new Promise(r => setTimeout(r, 4500)); await fetchFreshData(); return true; }
             } catch (e) { alert("Sync Failure."); }
             finally { setLoading(false); }
             return false;
@@ -349,7 +308,7 @@
         function navigate(view) {
             ['dashboard-view', 'module-details', 'grades-view'].forEach(s => document.getElementById(s).classList.add('hidden'));
             if(view === 'dashboard') { document.getElementById('dashboard-view').classList.remove('hidden'); renderGrid(); }
-            else { document.getElementById('grades-view').classList.remove('hidden'); renderTranscript(); }
+            else if(view === 'grades') { document.getElementById('grades-view').classList.remove('hidden'); renderTranscript(); }
         }
 
         function renderGrid() {
@@ -357,7 +316,7 @@
                 <div class="fancy-card p-12 cursor-pointer group" onclick="openModule('${c.id}')">
                     <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-[20px] flex items-center justify-center font-black mb-8 group-hover:scale-110 transition">RS</div>
                     <h3 class="text-3xl font-black mb-4 text-slate-800 tracking-tighter">${c.title}</h3>
-                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">${(c.assignments || []).length} Objectives Defined</p>
+                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">${(c.assignments || []).length} Objectives</p>
                 </div>`).join('');
         }
 
@@ -376,12 +335,10 @@
             const selector = document.getElementById('assign-selector');
             const assigns = activeMod.assignments || [];
             list.innerHTML = assigns.map((a, i) => `
-                <div class="fancy-card p-10 flex flex-col gap-6 bg-white border-l-[12px] border-blue-600">
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em]">Objective Segment ${i+1}</span>
-                    </div>
+                <div class="fancy-card p-10 flex flex-col gap-6 bg-white border-l-[12px] border-blue-600 scale-up">
+                    <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em]">Objective Segment ${i+1}</span>
                     <p class="font-bold text-slate-800 text-xl leading-relaxed">${a.task}</p>
-                    ${a.fileName ? `<div class="mt-4 text-[10px] font-black text-slate-400 bg-slate-50 p-4 rounded-xl inline-flex items-center gap-3 w-fit border border-slate-100 uppercase tracking-widest">Document: ${a.fileName}</div>` : ''}
+                    ${a.fileName ? `<div class="text-[10px] font-black text-slate-400 bg-slate-50 p-4 rounded-xl inline-flex items-center gap-3 w-fit border border-slate-100 uppercase tracking-widest">Document: ${a.fileName}</div>` : ''}
                 </div>`).join('');
             selector.innerHTML = assigns.map((a, i) => `<option value="${i}">Objective ${i+1}</option>`).join('');
         }
@@ -395,6 +352,37 @@
                 const avg = graded.length ? (graded.reduce((a, b) => a + parseInt(b.grade), 0) / graded.length).toFixed(1) + '%' : '---';
                 return `<tr class="hover:bg-slate-50/50 transition"><td class="p-8 font-black text-slate-800 text-lg">${u.name}</td><td class="p-8 text-slate-400 font-bold uppercase text-xs tracking-widest">${subs.length} Entries</td><td class="p-8 font-black text-blue-600 text-2xl">${avg}</td><td class="p-8 text-right"><button onclick="inspectUser('${u.email}')" class="btn-primary !p-3 !px-6 !text-[10px] uppercase tracking-[0.2em]">Inspect</button></td></tr>`;
             }).join('');
+        }
+
+        function inspectUser(email) {
+            const user = db.users.find(u => u.email === email);
+            const subs = db.submissions.filter(s => s.studentEmail === email);
+            document.getElementById('inspect-name').innerText = user.name + "'s Repository";
+            document.getElementById('inspect-subs').innerHTML = subs.map(s => `
+                <div class="p-10 bg-slate-50 rounded-[2.5rem] border border-slate-200">
+                    <div class="flex justify-between mb-6"><div><h4 class="font-black text-slate-900">${s.moduleTitle}</h4><p class="text-xs text-slate-400">${s.task}</p></div>
+                    <input type="number" value="${s.grade === 'PENDING' ? '' : s.grade}" onchange="gradeSub(${s.id}, this.value)" placeholder="Grade %" class="!w-32 !p-3 bg-white"></div>
+                    <p class="text-slate-600 font-medium whitespace-pre-line">${s.content}</p>
+                </div>`).join('');
+            toggleElement('grading-modal');
+        }
+
+        async function gradeSub(id, val) {
+            const idx = db.submissions.findIndex(s => s.id == id);
+            db.submissions[idx].grade = val;
+            await sync();
+            renderAdminExtras();
+        }
+
+        function renderTranscript() {
+            const subs = db.submissions.filter(s => s.studentEmail === currentUser.email);
+            document.getElementById('student-transcript').innerHTML = subs.map(s => `
+                <div class="fancy-card p-10 border-l-[12px] ${s.grade === 'PENDING' ? 'border-orange-400' : 'border-green-500'}">
+                    <div class="flex justify-between items-start mb-6">
+                        <div><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${s.moduleTitle}</p><h4 class="text-xl font-black text-slate-900">${s.task}</h4></div>
+                        <div class="text-2xl font-black ${s.grade === 'PENDING' ? 'text-orange-500' : 'text-green-600'}">${s.grade}${s.grade === 'PENDING' ? '' : '%'}</div>
+                    </div>
+                </div>`).join('');
         }
 
         async function createModule() {
@@ -417,9 +405,9 @@
         async function submitAssignment() {
             const content = document.getElementById('sub-content').value.trim();
             const aIdx = document.getElementById('assign-selector').value;
-            if(!content) return alert("Submission data required.");
+            if(!content) return alert("Data required.");
             db.submissions.push({ studentEmail: currentUser.email, studentName: currentUser.name, moduleTitle: activeMod.title, task: activeMod.assignments[aIdx].task, content, grade: 'PENDING', id: Date.now() });
-            if(await sync()) { alert("Data Synchronized."); navigate('dashboard'); document.getElementById('sub-content').value = ''; }
+            if(await sync()) { alert("Mainframe Synced."); navigate('dashboard'); document.getElementById('sub-content').value = ''; }
         }
 
         function logout() { localStorage.removeItem('robo_session_email'); location.reload(); }
