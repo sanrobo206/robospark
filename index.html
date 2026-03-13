@@ -8,45 +8,60 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         :root { --brand: #005aab; --brand-dark: #004482; --bg: #f4f7fa; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #1e293b; margin: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #1e293b; margin: 0; scroll-behavior: smooth; }
         
+        /* Layout & Components */
         .sidebar { background: #ffffff; border-right: 1px solid #e2e8f0; width: 280px; position: fixed; height: 100vh; z-index: 50; box-shadow: 4px 0 24px rgba(0,0,0,0.02); }
         .main-wrapper { margin-left: 280px; width: calc(100% - 280px); min-height: 100vh; }
+        .glass-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card:hover { border-color: var(--brand); transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0, 90, 171, 0.15); }
         
-        .glass-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .glass-card:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: 0 12px 30px -10px rgba(0, 90, 171, 0.15); }
-        .btn-primary { background: var(--brand); color: white; border-radius: 10px; font-weight: 700; padding: 12px 24px; transition: 0.2s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary:hover { background: var(--brand-dark); box-shadow: 0 8px 20px -6px rgba(0, 90, 171, 0.4); }
-        
-        .badge-admin { background: #eff6ff; color: #1d4ed8; padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+        .btn-primary { background: var(--brand); color: white; border-radius: 12px; font-weight: 700; padding: 12px 28px; transition: 0.2s; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn-primary:hover { background: var(--brand-dark); transform: scale(1.02); }
+        .btn-outline { border: 2px solid var(--brand); color: var(--brand); border-radius: 12px; font-weight: 700; padding: 10px 26px; transition: 0.2s; background: transparent; cursor: pointer; }
+        .btn-outline:hover { background: #eff6ff; }
+
         .hidden { display: none !important; }
-        input, textarea, select { background: #ffffff; border: 1px solid #cbd5e1 !important; border-radius: 10px !important; padding: 14px !important; outline: none; transition: 0.2s; font-size: 14px; }
+        input, textarea, select { background: #ffffff; border: 1px solid #cbd5e1 !important; border-radius: 12px !important; padding: 14px !important; outline: none; transition: 0.2s; }
         
-        #sync-toast { position: fixed; top: 24px; right: 24px; z-index: 1000; background: #1e293b; color: white; padding: 12px 24px; border-radius: 12px; font-size: 12px; font-weight: 600; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(-100px); transition: 0.5s; }
+        #sync-toast { position: fixed; top: 24px; right: 24px; z-index: 1000; background: #1e293b; color: white; padding: 12px 24px; border-radius: 12px; font-size: 12px; font-weight: 600; transform: translateY(-100px); transition: 0.5s; display: flex; align-items: center; gap: 12px; }
         #sync-toast.show { transform: translateY(0); }
+
+        /* Landing Page Aesthetics */
+        .hero-gradient { background: radial-gradient(circle at top right, #e0f2fe, transparent), radial-gradient(circle at bottom left, #f0f9ff, transparent); }
+        .step-card { border-left: 4px solid var(--brand); padding-left: 20px; }
     </style>
 </head>
 <body>
 
     <div id="sync-toast">
         <div class="animate-spin h-4 w-4 border-2 border-blue-400 border-t-transparent rounded-full"></div>
-        <span>Syncing Mainframe...</span>
+        <span>System Synchronizing...</span>
     </div>
+
+    <nav id="landing-nav" class="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-md border-b border-slate-100 px-10 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#005aab] rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">RS</div>
+            <span class="text-xl font-extrabold tracking-tighter text-slate-900">RoboSpark</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <button onclick="showSection('about-view')" class="text-sm font-bold text-slate-600 hover:text-blue-600 uppercase tracking-widest">About RoboSpark</button>
+            <button onclick="showAuth('login')" class="btn-outline text-xs uppercase tracking-widest">Join</button>
+            <button onclick="showAuth('signup')" class="btn-primary text-xs uppercase tracking-widest">Sign Up</button>
+        </div>
+    </nav>
 
     <aside id="main-sidebar" class="sidebar hidden flex flex-col">
         <div class="p-8">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 bg-[#005aab] rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-lg">RS</div>
-                <div>
-                    <span class="text-xl font-extrabold tracking-tight text-slate-900 block leading-none">RoboSpark</span>
-                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">LMS Enterprise</span>
-                </div>
+                <div class="w-10 h-10 bg-[#005aab] rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">RS</div>
+                <span class="text-xl font-extrabold tracking-tighter text-slate-900">RoboSpark</span>
             </div>
-            <p class="text-[10px] font-bold text-slate-400 mt-6 mb-2 uppercase tracking-widest px-1">Navigation</p>
+            <p class="text-[10px] font-bold text-slate-400 mt-6 uppercase tracking-widest px-1">Institutional Portal</p>
         </div>
         <nav class="flex-1 px-4 space-y-1">
-            <button onclick="navigate('dashboard')" class="w-full text-left p-4 rounded-xl hover:bg-slate-50 font-bold text-slate-600 transition flex items-center gap-3"> Dashboard</button>
-            <button onclick="navigate('grades')" class="w-full text-left p-4 rounded-xl hover:bg-slate-50 font-bold text-slate-600 transition flex items-center gap-3"> Gradebook</button>
+            <button onclick="navigate('dashboard')" class="w-full text-left p-4 rounded-xl hover:bg-slate-50 font-bold text-slate-600 transition">Dashboard</button>
+            <button onclick="navigate('grades')" class="w-full text-left p-4 rounded-xl hover:bg-slate-50 font-bold text-slate-600 transition">Gradebook</button>
         </nav>
         <div class="p-6 border-t border-slate-100 mt-auto">
             <div class="bg-slate-50 rounded-2xl p-4 mb-4">
@@ -55,75 +70,98 @@
             </div>
             <button onclick="logout()" class="w-full py-3 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-100 transition">Log Out</button>
         </div>
-        <div class="pb-6 text-center">
-            <p class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">by Sanatan Sinha</p>
-        </div>
+        <div class="pb-6 text-center"><p class="text-[9px] font-bold text-slate-300 uppercase tracking-widest">by Sanatan Sinha</p></div>
     </aside>
 
     <div id="main-content">
-        <section id="auth-view" class="min-h-screen flex items-center justify-center p-6">
-            <div class="max-w-md w-full glass-card p-10 bg-white">
+        <section id="home-view" class="hero-gradient min-h-screen pt-32 px-10">
+            <div class="max-w-6xl mx-auto text-center">
+                <div class="inline-block px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6">Academic Year 2026</div>
+                <h1 class="text-7xl lg:text-8xl font-black text-slate-900 tracking-tighter mb-8 leading-none">RoboSpark:<br><span class="text-blue-600">From Zero to Hero</span></h1>
+                <p class="text-xl text-slate-500 max-w-2xl mx-auto mb-12 font-medium">The definitive robotics education platform designed to transform beginners into industry-ready engineers.</p>
+                <div class="flex justify-center gap-6">
+                    <button onclick="showSection('about-view')" class="btn-primary py-5 px-10 text-lg">Begin Journey</button>
+                    <button onclick="showAuth('login')" class="btn-outline py-5 px-10 text-lg">Member Access</button>
+                </div>
+            </div>
+            
+            <div id="landing-course-previews" class="max-w-6xl mx-auto mt-32 grid grid-cols-1 md:grid-cols-3 gap-8 pb-20"></div>
+        </section>
+
+        <section id="about-view" class="hidden min-h-screen pt-32 px-10 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <button onclick="showSection('home-view')" class="mb-10 text-blue-600 font-bold flex items-center gap-2">← Back to Home</button>
+                <h2 class="text-5xl font-black text-slate-900 tracking-tight mb-6">Turning You From Zero to Hero</h2>
+                <p class="text-xl text-slate-600 leading-relaxed mb-12">RoboSpark is not just an LMS; it is a full-spectrum robotics incubator. Our curriculum is engineered to handle the complete transition of a student from zero knowledge to advanced technical mastery.</p>
+                
+                <div class="space-y-12">
+                    <div class="step-card">
+                        <h3 class="text-2xl font-black text-slate-800">01. Theoretical Foundation</h3>
+                        <p class="text-slate-500 mt-2">Deep dive into physics, electronics, and logic gates. Understanding 'Why' before 'How'.</p>
+                    </div>
+                    <div class="step-card">
+                        <h3 class="text-2xl font-black text-slate-800">02. CAD & Digital Prototyping</h3>
+                        <p class="text-slate-500 mt-2">Professional 3D designing and simulation before touching physical components.</p>
+                    </div>
+                    <div class="step-card">
+                        <h3 class="text-2xl font-black text-slate-800">03. Power & Actuation</h3>
+                        <p class="text-slate-500 mt-2">Operating motors, understanding torque, and power distribution systems.</p>
+                    </div>
+                    <div class="step-card">
+                        <h3 class="text-2xl font-black text-slate-800">04. Real-World Robotics</h3>
+                        <p class="text-slate-500 mt-2">Integrating AI and sensors into physical hardware to build autonomous machines.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-20 p-10 bg-blue-600 rounded-[3rem] text-white text-center shadow-2xl">
+                    <h4 class="text-3xl font-black mb-4">Ready to Build?</h4>
+                    <button onclick="showAuth('signup')" class="bg-white text-blue-600 px-10 py-4 rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition">Register Profile Now</button>
+                </div>
+            </div>
+            <div class="h-20"></div>
+        </section>
+
+        <section id="auth-view" class="hidden min-h-screen flex items-center justify-center p-6 hero-gradient">
+            <div class="max-w-md w-full glass-card p-10 bg-white shadow-2xl">
                 <div class="text-center mb-10">
-                    <div class="w-20 h-20 bg-[#005aab] rounded-3xl flex items-center justify-center text-white font-black text-4xl mb-6 mx-auto shadow-2xl">RS</div>
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight">RoboSpark Login</h1>
-                    <p class="text-sm font-medium text-slate-400 mt-2">Institutional Management Portal</p>
+                    <div class="w-16 h-16 bg-[#005aab] rounded-2xl flex items-center justify-center text-white font-black text-3xl mb-4 mx-auto">RS</div>
+                    <h1 id="auth-title" class="text-3xl font-black text-slate-900">Institutional Login</h1>
                 </div>
                 <div class="space-y-4">
-                    <input id="email" type="email" placeholder="Institutional Email">
+                    <input id="email" type="email" placeholder="Institutional Email" class="w-full">
                     <div id="login-fields" class="space-y-4">
-                        <input id="login-pass" type="password" placeholder="Access Key">
+                        <input id="login-pass" type="password" placeholder="Access Key" class="w-full">
                     </div>
                     <div id="signup-fields" class="hidden space-y-4">
-                        <input id="reg-name" placeholder="Full Legal Name">
-                        <input id="reg-pass" type="password" placeholder="Create Access Key">
+                        <input id="reg-name" placeholder="Full Legal Name" class="w-full">
+                        <input id="reg-pass" type="password" placeholder="Create Access Key" class="w-full">
                     </div>
-                    <button onclick="handleAuth()" id="auth-btn" class="w-full btn-primary justify-center text-sm uppercase tracking-widest py-4">Authenticate</button>
-                    <div class="pt-6 text-center">
-                        <button onclick="toggleAuth()" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest">Switch Access Mode</button>
-                    </div>
+                    <button onclick="handleAuth()" class="w-full btn-primary justify-center py-4 uppercase tracking-widest">Authenticate</button>
+                    <button onclick="toggleAuth()" class="w-full text-xs font-bold text-blue-600 uppercase tracking-widest mt-4">Switch Mode</button>
+                    <button onclick="showSection('home-view')" class="w-full text-[10px] text-slate-400 font-bold uppercase mt-8 italic">Cancel & Return</button>
                 </div>
-                <p class="text-center text-[9px] text-slate-300 font-bold mt-12 uppercase tracking-[0.3em]">System by Sanatan Sinha</p>
             </div>
         </section>
 
         <div id="app-view" class="hidden p-10 main-wrapper">
             <section id="admin-panel" class="hidden mb-16 space-y-8">
-                <div class="flex justify-between items-end border-b border-slate-200 pb-8">
+                <div class="flex justify-between items-end border-b pb-8">
                     <div>
-                        <h2 class="text-4xl font-black text-slate-900 tracking-tight">Admin Console</h2>
-                        <p class="text-slate-500 font-medium">Session 2026 Academic Management</p>
+                        <h2 class="text-4xl font-black text-slate-900">Master Control</h2>
+                        <p class="text-slate-500 font-medium">Session 2026 Registry</p>
                     </div>
-                    <div class="badge-admin">Verified Administrator</div>
+                    <div class="badge-admin">Verified Admin</div>
                 </div>
-                
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="glass-card p-8 lg:col-span-1">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-6 tracking-widest">Deploy Module</h3>
-                        <div class="space-y-4">
-                            <input id="c-title" placeholder="Module Title">
-                            <button onclick="createModule()" class="w-full btn-primary justify-center text-xs">Deploy</button>
-                        </div>
-                    </div>
-                    <div class="glass-card p-8 lg:col-span-2">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-6 tracking-widest">Registry</h3>
-                        <div id="directory-list" class="flex flex-wrap gap-2"></div>
-                    </div>
+                    <div class="glass-card p-8"><input id="c-title" placeholder="Module Title" class="w-full mb-4"><button onclick="createModule()" class="w-full btn-primary justify-center">Deploy Module</button></div>
+                    <div class="glass-card p-8 lg:col-span-2 overflow-y-auto max-h-40"><div id="directory-list" class="flex flex-wrap gap-2"></div></div>
                 </div>
-
                 <div class="glass-card overflow-hidden">
-                    <div class="p-6 bg-slate-50 border-b">
-                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Schoology Gradebook View</span>
-                    </div>
                     <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-[11px] uppercase text-slate-400 font-bold bg-white border-b">
-                                <th class="p-6">User</th>
-                                <th class="p-6">Progress</th>
-                                <th class="p-6">Performance</th>
-                                <th class="p-6 text-right">Actions</th>
-                            </tr>
+                        <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 border-b">
+                            <tr><th class="p-6">User</th><th class="p-6">Submission Count</th><th class="p-6">Avg Mastery</th><th class="p-6 text-right">Review</th></tr>
                         </thead>
-                        <tbody id="schoology-body" class="divide-y divide-slate-100 font-medium"></tbody>
+                        <tbody id="schoology-body" class="divide-y font-bold text-slate-700"></tbody>
                     </table>
                 </div>
             </section>
@@ -135,58 +173,53 @@
 
             <section id="module-details" class="hidden space-y-10">
                 <div class="flex items-center gap-6">
-                    <button onclick="navigate('dashboard')" class="w-12 h-12 rounded-2xl glass-card flex items-center justify-center hover:bg-slate-50">←</button>
+                    <button onclick="navigate('dashboard')" class="w-12 h-12 rounded-2xl glass-card flex items-center justify-center">←</button>
                     <h1 id="mod-title-hero" class="text-5xl font-black text-slate-900 tracking-tighter"></h1>
                 </div>
-
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     <div class="lg:col-span-2 space-y-8">
-                        <div class="bg-gradient-to-br from-[#005aab] to-[#003d73] p-10 rounded-[2rem] text-white shadow-2xl relative">
+                        <div class="bg-blue-600 p-10 rounded-[2.5rem] text-white shadow-xl">
                             <h2 class="text-2xl font-black mb-2 italic">Live Learning Link</h2>
-                            <p class="text-blue-100 text-sm mb-8">Hosted by Sanatan Sinha</p>
-                            <a id="mod-meet-link" target="_blank" class="bg-white text-[#005aab] px-8 py-4 rounded-xl font-black text-xs uppercase">Join Google Meet</a>
+                            <p class="text-blue-100 mb-8 opacity-80">Hosted by Sanatan Sinha</p>
+                            <a id="mod-meet-link" target="_blank" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-black uppercase text-xs">Join Google Meet</a>
                         </div>
-
                         <div id="admin-add-assign" class="hidden glass-card p-8 bg-blue-50/20 border-dashed border-2">
-                            <h3 class="text-xs font-black text-blue-600 uppercase mb-6 tracking-widest">New Objective</h3>
-                            <textarea id="new-assign-text" placeholder="Task details..." class="mb-4 h-32"></textarea>
-                            <div class="mb-6 p-4 bg-white rounded-xl border border-slate-200">
-                                <label class="text-[10px] font-black text-slate-400 uppercase block mb-2">Attach Resource Button</label>
-                                <input type="file" id="admin-file-input" class="!p-2 text-xs border-none">
+                            <textarea id="new-assign-text" placeholder="Objective details..." class="w-full mb-4 h-32"></textarea>
+                            <div class="mb-6 p-4 bg-white rounded-xl border">
+                                <label class="text-[10px] font-black text-slate-400 block mb-2 uppercase">Attachment Support</label>
+                                <input type="file" id="admin-file-input" class="text-xs">
                             </div>
-                            <button onclick="addAssignmentToModule()" class="btn-primary w-full justify-center">Deploy Task</button>
+                            <button onclick="addAssignmentToModule()" class="btn-primary w-full justify-center">Publish Objective</button>
                         </div>
                         <div id="assign-list" class="space-y-4"></div>
                     </div>
-
                     <div class="glass-card p-8 h-fit sticky top-10">
-                        <h3 class="font-black text-slate-900 mb-6 uppercase text-xs tracking-widest">Submit Report</h3>
-                        <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">Objective</label>
-                        <select id="assign-selector" class="mb-6 font-bold text-slate-700"></select>
-                        <textarea id="sub-content" placeholder="Content links or text..." class="h-48 mb-6"></textarea>
-                        <button onclick="submitAssignment()" class="w-full btn-primary justify-center bg-orange-600 hover:bg-orange-700 uppercase text-xs">Transmit Report</button>
+                        <h3 class="font-black mb-6 uppercase text-xs tracking-widest text-slate-400">Finalize Report</h3>
+                        <label class="text-[10px] font-black uppercase mb-2 block">Select Task</label>
+                        <select id="assign-selector" class="w-full mb-6 font-bold"></select>
+                        <textarea id="sub-content" placeholder="Content/Links..." class="w-full h-48 mb-6"></textarea>
+                        <button onclick="submitAssignment()" class="w-full btn-primary bg-orange-600 hover:bg-orange-700 justify-center">Transmit</button>
                     </div>
                 </div>
             </section>
 
             <section id="grades-view" class="hidden space-y-10">
-                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Performance Transcript</h2>
+                <h2 class="text-4xl font-black text-slate-900">Performance Transcript</h2>
                 <div id="student-transcript" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
             </section>
         </div>
     </div>
 
     <div id="grading-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center hidden p-6">
-        <div class="bg-white w-full max-w-5xl rounded-[2.5rem] p-12 h-[85vh] overflow-y-auto relative shadow-2xl">
-            <button onclick="toggleElement('grading-modal')" class="absolute top-10 right-10 text-slate-400 font-bold uppercase text-[10px]">Close</button>
-            <h3 id="inspect-name" class="text-4xl font-black text-slate-900 mb-2"></h3>
-            <p class="text-blue-600 font-bold text-xs uppercase mb-12">Evaluation Portal</p>
-            <div id="inspect-subs" class="space-y-8"></div>
+        <div class="bg-white w-full max-w-5xl rounded-[3rem] p-12 h-[85vh] overflow-y-auto relative shadow-2xl">
+            <button onclick="toggleElement('grading-modal')" class="absolute top-10 right-10 text-slate-400 font-bold uppercase text-xs">Close Terminal</button>
+            <h3 id="inspect-name" class="text-4xl font-black mb-2 text-slate-900"></h3>
+            <div id="inspect-subs" class="space-y-8 mt-12"></div>
         </div>
     </div>
 
     <script>
-        // FRAGMENTED TOKEN SECURITY
+        // FRAGMENTED PAT SECURITY (Feature Preserved)
         const _a = "ghp_vc5lzvETlEx";
         const _b = "jm4M787RvGHO";
         const _c = "SOBMQbO3ZWGYu";
@@ -201,11 +234,8 @@
                 const res = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/data.json?t=${Date.now()}`, {
                     headers: { "Authorization": `Bearer ${REPO.token}`, "Accept": "application/vnd.github.v3.raw" }
                 });
-                if(res.ok) {
-                    db = await res.json();
-                    return true;
-                }
-            } catch(e) { console.error("Database Uplink Fail"); }
+                if(res.ok) { db = await res.json(); renderLandingPreviews(); return true; }
+            } catch(e) { console.error("Data Link Fail"); }
             finally { setLoading(false); }
             return false;
         }
@@ -214,6 +244,33 @@
             const ok = await fetchFreshData();
             const savedEmail = localStorage.getItem('robo_session_email');
             if(savedEmail && ok) finalizeLogin(savedEmail);
+        }
+
+        function showSection(id) {
+            ['home-view', 'about-view', 'auth-view', 'app-view'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'home-view' || id === 'about-view') document.getElementById('landing-nav').classList.remove('hidden');
+            else document.getElementById('landing-nav').classList.add('hidden');
+        }
+
+        function showAuth(mode) {
+            showSection('auth-view');
+            const signup = document.getElementById('signup-fields');
+            const login = document.getElementById('login-fields');
+            const title = document.getElementById('auth-title');
+            if(mode === 'signup') { signup.classList.remove('hidden'); login.classList.add('hidden'); title.innerText = "Student Registration"; }
+            else { signup.classList.add('hidden'); login.classList.remove('hidden'); title.innerText = "Institutional Login"; }
+        }
+
+        function renderLandingPreviews() {
+            const grid = document.getElementById('landing-course-previews');
+            grid.innerHTML = db.courses.slice(0, 3).map(c => `
+                <div class="glass-card p-10 bg-white/50 backdrop-blur-sm">
+                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-4 block">Course Insight</span>
+                    <h3 class="text-2xl font-black text-slate-800 mb-4">${c.title}</h3>
+                    <p class="text-sm text-slate-500 font-medium mb-8 leading-relaxed">This module focuses on the transition from theory to mechanical execution.</p>
+                    <button onclick="showAuth('login')" class="text-blue-600 font-black uppercase text-xs tracking-widest hover:underline">Join Now →</button>
+                </div>`).join('');
         }
 
         async function handleAuth() {
@@ -230,13 +287,10 @@
                 if(await sync()) finalizeLogin(emailInput);
             } else {
                 const pass = document.getElementById('login-pass').value.trim();
-                if(emailInput === "sanrobo206@gmail.com" && pass === "robosparkadmin") {
-                    finalizeLogin(emailInput);
-                    return;
-                }
+                if(emailInput === "sanrobo206@gmail.com" && pass === "robosparkadmin") { finalizeLogin(emailInput); return; }
                 const user = db.users.find(u => u.email === emailInput && u.password === pass);
                 if(user) finalizeLogin(emailInput);
-                else alert("ACCESS DENIED: Credentials mismatch.");
+                else alert("AUTHENTICATION FAILED: Institutional credentials rejected.");
             }
         }
 
@@ -247,18 +301,14 @@
 
             currentUser = record;
             localStorage.setItem('robo_session_email', email);
-            document.getElementById('auth-view').classList.add('hidden');
+            showSection('app-view');
+            document.getElementById('landing-nav').classList.add('hidden');
             document.getElementById('main-sidebar').classList.remove('hidden');
-            document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
             document.getElementById('user-display-uid').innerText = currentUser.uid;
             
-            if(currentUser.role === 'admin') {
-                document.getElementById('admin-panel').classList.remove('hidden');
-                renderAdminExtras();
-            } else {
-                document.getElementById('admin-panel').classList.add('hidden');
-            }
+            if(currentUser.role === 'admin') { document.getElementById('admin-panel').classList.remove('hidden'); renderAdminExtras(); }
+            else document.getElementById('admin-panel').classList.add('hidden');
             renderGrid();
         }
 
@@ -288,7 +338,7 @@
 
         function renderGrid() {
             document.getElementById('course-grid').innerHTML = db.courses.map(c => `
-                <div class="glass-card p-8 cursor-pointer group" onclick="openModule('${c.id}')">
+                <div class="glass-card p-10 cursor-pointer group" onclick="openModule('${c.id}')">
                     <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">RS</div>
                     <h3 class="text-2xl font-black mb-2 text-slate-800 tracking-tighter">${c.title}</h3>
                     <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${(c.assignments || []).length} Objectives</p>
@@ -332,41 +382,6 @@
             }).join('');
         }
 
-        function inspectUser(email) {
-            const user = db.users.find(u => u.email === email);
-            const subs = db.submissions.filter(s => s.studentEmail === email);
-            document.getElementById('inspect-name').innerText = user.name;
-            document.getElementById('inspect-subs').innerHTML = subs.map(s => `
-                <div class="p-8 bg-slate-50 rounded-3xl border border-slate-200">
-                    <div class="flex justify-between items-center mb-6"><span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">${s.moduleTitle}</span><span class="font-black text-2xl text-slate-800 italic">${s.grade}</span></div>
-                    <p class="font-bold mb-4 text-slate-800 text-lg">Objective: ${s.task}</p>
-                    <div class="p-6 bg-white rounded-2xl border border-slate-200 mb-6 text-sm text-slate-600 font-medium italic">"${s.content}"</div>
-                    <div class="flex items-center gap-4"><input id="score-${s.id}" type="number" placeholder="Mastery %" class="!w-32"><button onclick="saveGrade('${s.id}')" class="btn-primary !py-3">Save</button></div>
-                </div>`).join('') || "<p class='text-center py-20 text-slate-400 font-black uppercase tracking-widest'>No evidence.</p>";
-            document.getElementById('grading-modal').classList.remove('hidden');
-        }
-
-        async function saveGrade(sid) {
-            const score = document.getElementById(`score-${sid}`).value;
-            if(!score) return;
-            db.submissions.find(s => s.id == sid).grade = score + "%";
-            if(await sync()) {
-                const sub = db.submissions.find(s => s.id == sid);
-                inspectUser(sub.studentEmail);
-                renderAdminExtras();
-            }
-        }
-
-        function renderTranscript() {
-            const mySubs = db.submissions.filter(s => s.studentEmail === currentUser.email);
-            document.getElementById('student-transcript').innerHTML = mySubs.map(s => `
-                <div class="glass-card p-8">
-                    <p class="text-[10px] font-black text-blue-600 uppercase mb-4 tracking-widest">${s.moduleTitle}</p>
-                    <p class="font-black text-xl mb-6 text-slate-800 leading-tight">${s.task}</p>
-                    <div class="pt-6 border-t flex justify-between items-center"><span class="text-[10px] font-black text-slate-400 uppercase">Mastery</span><span class="text-4xl font-black text-blue-600 italic">${s.grade}</span></div>
-                </div>`).join('') || "<p class='col-span-2 text-center py-40 text-slate-400 font-black uppercase tracking-widest'>No reports.</p>";
-        }
-
         async function createModule() {
             const title = document.getElementById('c-title').value.trim();
             if(!title) return;
@@ -381,11 +396,7 @@
             let fileName = fileInput.files[0] ? fileInput.files[0].name : null;
             const idx = db.courses.findIndex(c => c.id == activeMod.id);
             db.courses[idx].assignments.push({ task, id: Date.now(), fileName });
-            if(await sync()) {
-                document.getElementById('new-assign-text').value = '';
-                fileInput.value = '';
-                renderModuleAssignments();
-            }
+            if(await sync()) { document.getElementById('new-assign-text').value = ''; fileInput.value = ''; renderModuleAssignments(); }
         }
 
         async function submitAssignment() {
@@ -393,24 +404,14 @@
             const aIdx = document.getElementById('assign-selector').value;
             if(!content) return alert("Submission Rejected: Empty Report.");
             db.submissions.push({ studentEmail: currentUser.email, studentName: currentUser.name, moduleTitle: activeMod.title, task: activeMod.assignments[aIdx].task, content, grade: 'PENDING', id: Date.now() });
-            if(await sync()) { alert("SUCCESS: Evidence transmitted."); navigate('dashboard'); document.getElementById('sub-content').value = ''; }
+            if(await sync()) { alert("SUCCESS: Mission report transmitted."); navigate('dashboard'); document.getElementById('sub-content').value = ''; }
         }
 
-        async function deleteAssignment(aid) {
-            if(!confirm("Erase assignment?")) return;
-            const midx = db.courses.findIndex(c => c.id == activeMod.id);
-            db.courses[midx].assignments = db.courses[midx].assignments.filter(a => a.id != aid);
-            if(await sync()) renderModuleAssignments();
-        }
-
-        function toggleAuth() { document.getElementById('signup-fields').classList.toggle('hidden'); document.getElementById('login-fields').classList.toggle('hidden'); }
+        function toggleAuth() { const fields = document.getElementById('signup-fields'); showAuth(fields.classList.contains('hidden') ? 'signup' : 'login'); }
         function logout() { localStorage.removeItem('robo_session_email'); location.reload(); }
         function toggleElement(id) { document.getElementById(id).classList.toggle('hidden'); }
-        function setLoading(s) { 
-            const toast = document.getElementById('sync-toast');
-            if(s) toast.classList.add('show');
-            else toast.classList.remove('show');
-        }
+        function setLoading(s) { const toast = document.getElementById('sync-toast'); if(s) toast.classList.add('show'); else toast.classList.remove('show'); }
+        
         init();
     </script>
 </body>
