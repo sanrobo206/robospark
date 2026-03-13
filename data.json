@@ -7,6 +7,11 @@
         {
           "task": "Test One",
           "id": 1772422916196
+        },
+        {
+          "task": "RoboSpark Handbook:\n\nRead the handbook thoroughly and type \"I agree\" in the assignment field.",
+          "id": 1773435187491,
+          "fileName": "RoboSpark Guidelines.pdf"
         }
       ]
     }
